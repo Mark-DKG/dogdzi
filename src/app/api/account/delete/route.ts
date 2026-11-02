@@ -25,17 +25,15 @@ export async function POST(req: Request) {
   const { error: authError } = await sb.auth.signInWithPassword({ email: user.email, password: body.password });
   if (authError) return json({ error: "That password isn't right." }, 403);
 
-  const { error } = await sb.rpc("delete_my_account");
-  if (error) {
-    // Fallback for projects where the function can't remove auth users directly.
-    const service = getServiceSupabase();
-    if (!service) return json({ error: "Account deletion isn't available right now. Please contact support." }, 500);
-    const { error: purgeErr } = await service.rpc("purge_user_data", { p_user: user.id });
-    if (purgeErr) {
-      console.error("[dogdzi] purge failed", purgeErr.message);
-      return json({ error: "We couldn't delete your account. Please try again or contact support." }, 500);
-    }
-    await service.auth.admin.deleteUser(user.id).catch(() => {});
+  // Deletion runs server-side only (the database function isn't callable by users).
+  const service = getServiceSupabase();
+  if (!service) return json({ error: "Account deletion isn't available right now. Please contact support." }, 500);
+  const { data: isAdmin } = await service.from("admin_users").select("user_id").eq("user_id", user.id).maybeSingle();
+  if (isAdmin) return json({ error: "Admin accounts must be removed from the admin team first." }, 403);
+  const { error: purgeErr } = await service.rpc("purge_user_data", { p_user: user.id });
+  if (purgeErr) {
+    console.error("[dogdzi] purge failed", purgeErr.message);
+    return json({ error: "We couldn't delete your account. Please try again or contact support." }, 500);
   }
   await sb.auth.signOut().catch(() => {});
   return noContent();

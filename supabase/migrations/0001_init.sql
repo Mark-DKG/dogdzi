@@ -26,7 +26,10 @@ create or replace function public.prevent_mutation() returns trigger
 language plpgsql set search_path = '' as $$
 begin
   if public.is_purging() then
-    return case when tg_op = 'DELETE' then old else new end;
+    if tg_op = 'DELETE' then
+      return old;
+    end if;
+    return new;
   end if;
   raise exception '% is append-only: records cannot be changed or removed', tg_table_name
     using errcode = 'P0001';
