@@ -49,7 +49,7 @@ test("migration moves every guest record, keeping ids, history and responses", (
   const merged = applyPatch(account, plan.patch);
   assert.deepEqual(merged.occurrences.map((o) => o.status).sort(), ["missed", "pending"], "the missed original survives conversion");
   assert.equal(merged.preferences.reminderStyle, "firm", "a fresh account adopts guest settings");
-  assert.equal(merged.preferences.pushEnabled, false, "push is never carried over");
+  assert.equal(merged.preferences.pushEnabled, account.preferences.pushEnabled, "push keeps the account's own setting");
 });
 
 test("migration merges matching categories instead of duplicating them", () => {

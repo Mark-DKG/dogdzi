@@ -227,9 +227,11 @@ function Settings() {
                 ? "Needs a free account."
                 : !pushConfigured
                   ? "Not configured on this server yet (VAPID keys required)."
-                  : "Sends reminders to this device through your browser's push service."
+                  : permission === "denied"
+                    ? "Notifications are blocked for this site. Allow them in your browser's site settings to get push reminders."
+                    : "On by default. Sends reminders to this device through your browser's push service."
             }
-            checked={p.pushEnabled}
+            checked={mode === "account" && p.pushEnabled && permission !== "denied"}
             disabled={pushBusy || (mode === "account" && !pushConfigured)}
             onChange={async (on) => {
               if (on && !allow("push")) return;
@@ -261,7 +263,7 @@ function Settings() {
         />
         <div className="flex flex-wrap gap-2">
           <Button variant="secondary" size="sm" onClick={exportData}>
-            Download my data (JSON)
+            Download my data
           </Button>
           <LinkButton href="/privacy" variant="ghost" size="sm">
             Privacy notice

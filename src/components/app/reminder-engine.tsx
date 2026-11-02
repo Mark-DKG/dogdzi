@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { toISODate } from "@/lib/domain/dates";
 import { applyDailyCap, dueInWindow, planReminders, type PlannedReminder } from "@/lib/domain/reminders";
-import { showLocalNotification } from "@/lib/push/client";
+import { devicePushActive, showLocalNotification } from "@/lib/push/client";
 import { useToast } from "@/components/ui/toast";
 import { useData } from "./data-provider";
 
@@ -29,8 +29,10 @@ function writeSent(day: string, keys: Set<string>) {
 /**
  * In-app reminders while DOGDZI is open (guests and accounts). Uses system
  * notifications if the user allowed them, otherwise an on-screen toast.
- * When server push is enabled for an account, the server sends reminders
- * instead so people aren't notified twice.
+ * When this device is subscribed to server push (account with push on), the
+ * server sends reminders instead so people aren't notified twice. Push being
+ * on in settings isn't enough: without a subscription here (blocked, not yet
+ * allowed, or unsupported), in-app reminders still run.
  */
 export function ReminderEngine() {
   const { status, snapshot, mode } = useData();
@@ -44,7 +46,7 @@ export function ReminderEngine() {
     const check = async () => {
       const s = snapRef.current;
       const prefs = s.preferences;
-      if (mode === "account" && prefs.pushEnabled) return;
+      if (mode === "account" && prefs.pushEnabled && (await devicePushActive())) return;
       const now = new Date();
       const from = lastCheck.current;
       lastCheck.current = now;

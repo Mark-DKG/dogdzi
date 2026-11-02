@@ -16,6 +16,7 @@ import { useData } from "./data-provider";
 import { InstallBanner } from "./install-app";
 import { UpgradeDialog } from "./gate";
 import { ReminderEngine } from "./reminder-engine";
+import { PushAutoEnable } from "./push-auto";
 import { SessionTracker } from "./session-tracker";
 import { TermsGate } from "./terms-gate";
 import { ThemeToggle } from "./theme-toggle";
@@ -55,6 +56,7 @@ function Shell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-dvh lg:pl-64">
       <SessionTracker signedIn={!!user} />
+      <PushAutoEnable />
 
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-forest-900 text-cream-100 lg:flex" aria-label="Main">

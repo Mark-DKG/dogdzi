@@ -25,7 +25,7 @@ export function defaultPreferences(timezone: string, nowIso: string): Preference
     quietStart: "22:00",
     quietEnd: "07:00",
     maxNotificationsPerDay: 12,
-    pushEnabled: false,
+    pushEnabled: true,
     termsVersion: null,
     termsAcceptedAt: null,
     updatedAt: nowIso,

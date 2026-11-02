@@ -58,6 +58,17 @@ export async function subscribeToPush(): Promise<{ ok: true } | { ok: false; mes
   }
 }
 
+/** True when this device has notifications allowed and an active push subscription. */
+export async function devicePushActive(): Promise<boolean> {
+  try {
+    if (!pushSupported() || Notification.permission !== "granted") return false;
+    const reg = await navigator.serviceWorker.getRegistration();
+    return !!(await reg?.pushManager.getSubscription());
+  } catch {
+    return false;
+  }
+}
+
 export async function unsubscribeFromPush(): Promise<void> {
   const reg = await navigator.serviceWorker?.getRegistration();
   const sub = await reg?.pushManager.getSubscription();
