@@ -199,6 +199,8 @@ export const REMINDER_STYLES = ["gentle", "standard", "firm", "persistent"] as c
 export type ReminderStyle = (typeof REMINDER_STYLES)[number];
 
 export interface Preferences {
+  /** How DOGDZI addresses the user, e.g. on Today. */
+  firstName: string | null;
   lifeAreas: LifeArea[];
   timezone: string;
   weekStartsOn: 0 | 1;

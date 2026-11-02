@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { reviewQueue } from "@/lib/domain/actions";
+import { greetingFor } from "@/lib/domain/names";
 import { routineStreak } from "@/lib/domain/insights";
 import { ActionList, sortByTime } from "@/components/app/action-item";
 import { useComposer } from "@/components/app/composer";
@@ -13,12 +14,6 @@ import { DashboardSkeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/states";
 import { Card, ProgressRing, SectionTitle } from "@/components/ui/surface";
 
-function greeting(): string {
-  const h = new Date().getHours();
-  if (h < 12) return "Good morning";
-  if (h < 17) return "Good afternoon";
-  return "Good evening";
-}
 
 export default function TodayPage() {
   return (
@@ -30,6 +25,7 @@ export default function TodayPage() {
 
 function Today() {
   const { snapshot, today } = useData();
+  const firstName = snapshot.preferences.firstName ?? null;
   const composer = useComposer();
   const todays = snapshot.occurrences.filter((o) => o.date === today && o.status !== "rescheduled" && o.status !== "cancelled").sort(sortByTime);
   const open = todays.filter((o) => o.status === "pending");
@@ -45,7 +41,14 @@ function Today() {
     <div className="animate-fade-in">
       <header className="mb-6">
         <p className="text-sm font-semibold text-muted">{dateLabel}</p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-[28px]">{greeting()}.</h1>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-[28px]" suppressHydrationWarning>
+          {greetingFor(new Date().getHours(), firstName)}.
+        </h1>
+        {!firstName && (
+          <Link href="/app/settings#first-name" className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-muted underline-offset-4 hover:text-fg hover:underline">
+            Add your first name
+          </Link>
+        )}
       </header>
 
       <div className="mb-6 grid grid-cols-3 gap-3">

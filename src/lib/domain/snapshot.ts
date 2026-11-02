@@ -16,6 +16,7 @@ export const DEFAULT_AREAS: LifeArea[] = ["personal", "work", "health", "home"];
 
 export function defaultPreferences(timezone: string, nowIso: string): Preferences {
   return {
+    firstName: null,
     lifeAreas: DEFAULT_AREAS,
     timezone,
     weekStartsOn: 1,

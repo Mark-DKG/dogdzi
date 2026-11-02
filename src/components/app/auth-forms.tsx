@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { trackEvent } from "@/lib/analytics/client";
+import { FIRST_NAME_MAX, normalizeFirstName } from "@/lib/domain/names";
 import { hasGuestData, readGuestSnapshot } from "@/lib/store/local-repo";
 import { getBrowserSupabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -79,6 +80,7 @@ export function SignInForm() {
 export function SignUpForm() {
   const router = useRouter();
   const sb = getBrowserSupabase();
+  const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -97,6 +99,8 @@ export function SignUpForm() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs: Record<string, string> = {};
+    const name = normalizeFirstName(firstName);
+    if (!name) errs.firstName = "Tell us what to call you.";
     if (!EMAIL_RE.test(email)) errs.email = "Enter a valid email address.";
     if (password.length < 8) errs.password = "Use at least 8 characters.";
     else if (!/[A-Za-z]/.test(password) || !/\d/.test(password)) errs.password = "Include at least one letter and one number.";
@@ -106,7 +110,7 @@ export function SignUpForm() {
     const { data, error } = await sb.auth.signUp({
       email: email.trim(),
       password,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=/app` },
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=/app`, data: { first_name: name } },
     });
     setBusy(false);
     if (error) return setErrors({ form: friendly(error.message) });
@@ -135,6 +139,9 @@ export function SignUpForm() {
           {errors.form}
         </p>
       )}
+      <Field label="First name" error={errors.firstName}>
+        {({ id, describedBy, invalid }) => <Input id={id} aria-describedby={describedBy} aria-invalid={invalid} autoComplete="given-name" autoCapitalize="words" maxLength={FIRST_NAME_MAX} value={firstName} onChange={(e) => setFirstName(e.target.value)} />}
+      </Field>
       <Field label="Email" error={errors.email}>
         {({ id, describedBy, invalid }) => <Input id={id} aria-describedby={describedBy} aria-invalid={invalid} type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} />}
       </Field>

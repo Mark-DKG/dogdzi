@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { createAction, updatePreferences } from "@/lib/domain/actions";
 import { isValidHHMM } from "@/lib/domain/dates";
+import { FIRST_NAME_MAX, normalizeFirstName } from "@/lib/domain/names";
 import { STYLE_DESCRIPTIONS } from "@/lib/domain/reminders";
 import { AREA_META, DEFAULT_AREAS } from "@/lib/domain/snapshot";
 import { LIFE_AREAS, REMINDER_STYLES, type LifeArea, type ReminderStyle } from "@/lib/domain/types";
@@ -48,6 +49,7 @@ function Onboarding() {
   const params = useSearchParams();
   const { status, error, retry, snapshot, run, today, mode, accountsAvailable } = useData();
   const [step, setStep] = useState(0);
+  const [firstName, setFirstName] = useState("");
   const [areas, setAreas] = useState<LifeArea[]>(DEFAULT_AREAS);
   const [style, setStyle] = useState<ReminderStyle>("standard");
   const [quietStart, setQuietStart] = useState("22:00");
@@ -66,6 +68,7 @@ function Onboarding() {
   useEffect(() => {
     if (status === "ready") {
       if (snapshot.preferences.onboardingCompleted && params.get("redo") !== "1") router.replace("/app");
+      setFirstName(snapshot.preferences.firstName ?? "");
       setAreas(snapshot.preferences.lifeAreas);
       setStyle(snapshot.preferences.reminderStyle);
       setDate(today);
@@ -101,6 +104,13 @@ function Onboarding() {
     );
 
   const next = async () => {
+    if (step === 0) {
+      const name = normalizeFirstName(firstName);
+      if (name !== (snapshot.preferences.firstName ?? null)) {
+        const ok = await run((s, ctx) => updatePreferences(s, { firstName: name }, ctx));
+        if (!ok) return;
+      }
+    }
     if (step === 1 || step === 2) await savePrefs();
     if (step === 3 && title.trim()) {
       setTitleError(null);
@@ -147,6 +157,13 @@ function Onboarding() {
                 </li>
               ))}
             </ol>
+            <div className="mt-8">
+              <Field label="What should we call you?" optional hint="Your first name, so DOGDZI can greet you.">
+                {({ id, describedBy }) => (
+                  <Input id={id} aria-describedby={describedBy} autoComplete="given-name" autoCapitalize="words" maxLength={FIRST_NAME_MAX} value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="e.g. Ama" />
+                )}
+              </Field>
+            </div>
           </>
         )}
 

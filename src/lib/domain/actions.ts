@@ -8,6 +8,7 @@
  *  - history events and accountability responses are append-only
  */
 import { addDays, isValidHHMM, isValidISODate, toISODate, zonedToUtc } from "./dates";
+import { normalizeFirstName } from "./names";
 import { deterministicUuid } from "./ids";
 import { expandRecurrence } from "./recurrence";
 import { applyPatch, emptyPatch, mergePatches, missingAreaCategories } from "./snapshot";
@@ -631,6 +632,7 @@ export function updatePreferences(s: Snapshot, changes: Partial<Preferences>, ct
   if (changes.maxNotificationsPerDay !== undefined && (changes.maxNotificationsPerDay < 1 || changes.maxNotificationsPerDay > 50)) {
     throw new DomainError("invalid", "Daily notification limit must be between 1 and 50.");
   }
+  if (changes.firstName !== undefined) changes = { ...changes, firstName: normalizeFirstName(changes.firstName) };
   const patch: Patch = { upsert: {}, append: {}, preferences: { ...changes, updatedAt: iso(ctx) } };
   if (changes.lifeAreas) {
     const cats = missingAreaCategories(s, changes.lifeAreas, iso(ctx), ctx.id);

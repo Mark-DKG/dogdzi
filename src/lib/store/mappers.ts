@@ -113,6 +113,7 @@ export const fromRow = {
 export function prefsToRows(p: Partial<Preferences>, user_id: string) {
   const user: Row = { user_id };
   const notif: Row = { user_id };
+  if (p.firstName !== undefined) user.first_name = p.firstName;
   if (p.lifeAreas) user.life_areas = p.lifeAreas;
   if (p.timezone) user.timezone = p.timezone;
   if (p.weekStartsOn !== undefined) user.week_starts_on = p.weekStartsOn;
@@ -133,6 +134,7 @@ export function prefsToRows(p: Partial<Preferences>, user_id: string) {
 
 export function prefsFromRows(user: Row | null, notif: Row | null, fallback: Preferences): Preferences {
   return {
+    firstName: user && "first_name" in user ? ((user.first_name as string | null) ?? null) : fallback.firstName,
     lifeAreas: (user?.life_areas as Preferences["lifeAreas"]) ?? fallback.lifeAreas,
     timezone: (user?.timezone as string) ?? fallback.timezone,
     weekStartsOn: (user?.week_starts_on as 0 | 1) ?? fallback.weekStartsOn,

@@ -18,6 +18,7 @@ import { IconChart, IconHistory, IconLogout } from "@/components/icons";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { ChoiceChips, Field, Input, Switch, ToggleChips } from "@/components/ui/field";
+import { FIRST_NAME_MAX, normalizeFirstName } from "@/lib/domain/names";
 import { PasswordInput } from "@/components/ui/password-input";
 import { SettingsSkeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
@@ -41,6 +42,7 @@ function Settings() {
   const { snapshot, run, mode, user, signOut, accountsAvailable, allow } = useData();
   const toast = useToast();
   const p = snapshot.preferences;
+  const [firstName, setFirstName] = useState(p.firstName ?? "");
   const [quietStart, setQuietStart] = useState(p.quietStart);
   const [quietEnd, setQuietEnd] = useState(p.quietEnd);
   const [maxPerDay, setMaxPerDay] = useState(String(p.maxNotificationsPerDay));
@@ -49,6 +51,15 @@ function Settings() {
   const [consent, setConsent] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [pushBusy, setPushBusy] = useState(false);
+
+  useEffect(() => {
+    // Arriving from "Add your first name" on Today: bring the field into view and focus it.
+    if (window.location.hash === "#first-name") {
+      const form = document.getElementById("first-name");
+      form?.scrollIntoView({ block: "center" });
+      form?.querySelector("input")?.focus({ preventScroll: true });
+    }
+  }, []);
 
   useEffect(() => {
     setPermission(notificationsSupported() ? Notification.permission : "unsupported");
@@ -62,6 +73,14 @@ function Settings() {
     const n = Number(maxPerDay);
     if (!Number.isInteger(n) || n < 1 || n > 50) return toast.show("Daily limit must be between 1 and 50.", "error");
     save({ quietStart, quietEnd, maxNotificationsPerDay: n });
+  };
+
+  const saveName = (e: React.FormEvent) => {
+    e.preventDefault();
+    const name = normalizeFirstName(firstName);
+    setFirstName(name ?? "");
+    if (name === (p.firstName ?? null)) return;
+    save({ firstName: name }, name ? `We'll call you ${name}` : "Name removed");
   };
 
   const exportData = () => {
@@ -87,6 +106,16 @@ function Settings() {
       </div>
 
       <Section title="Account">
+        <form id="first-name" onSubmit={saveName} className="flex scroll-mt-24 items-end gap-2">
+          <Field label="First name" hint="Used to greet you on Today." className="min-w-0 flex-1">
+            {({ id, describedBy }) => (
+              <Input id={id} aria-describedby={describedBy} autoComplete="given-name" autoCapitalize="words" maxLength={FIRST_NAME_MAX} value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+            )}
+          </Field>
+          <Button type="submit" variant="secondary" className="mb-[1.375rem] shrink-0">
+            Save
+          </Button>
+        </form>
         {mode === "account" && user ? (
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>

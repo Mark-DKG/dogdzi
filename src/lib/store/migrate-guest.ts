@@ -50,6 +50,10 @@ export function planGuestMigration(guest: Snapshot, account: Snapshot): Migratio
     void _push;
     patch.preferences = rest as Partial<Preferences>;
   }
+  // A first name given as a guest carries over if the account has none.
+  if (guest.preferences.firstName && !account.preferences.firstName) {
+    patch.preferences = { ...(patch.preferences ?? {}), firstName: guest.preferences.firstName };
+  }
   // Terms accepted as a guest on this device count for the new account.
   if (guest.preferences.termsVersion && !account.preferences.termsVersion) {
     patch.preferences = { ...(patch.preferences ?? {}), termsVersion: guest.preferences.termsVersion, termsAcceptedAt: guest.preferences.termsAcceptedAt };
