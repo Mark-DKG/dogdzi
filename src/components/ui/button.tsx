@@ -13,10 +13,10 @@ const VARIANTS: Record<Variant, string> = {
   brand: "bg-cream-200 text-forest-900 hover:bg-cream-300",
 };
 const SIZES: Record<Size, string> = {
-  sm: "h-9 px-3 text-sm gap-1.5",
+  sm: "h-10 px-3.5 text-sm gap-1.5",
   md: "h-11 px-4 text-sm gap-2",
   lg: "h-12 px-6 text-base gap-2",
-  icon: "h-10 w-10 justify-center",
+  icon: "h-11 w-11 justify-center",
 };
 
 export function buttonClass(variant: Variant = "primary", size: Size = "md", className?: string) {

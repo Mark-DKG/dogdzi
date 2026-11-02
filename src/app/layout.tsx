@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
 import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { VercelAnalytics } from "@/components/analytics/vercel-analytics";
+import { PlatformBoot } from "@/components/app/platform-boot";
 import { ServiceWorkerRegister } from "@/components/app/sw-register";
 import { ToastProvider } from "@/components/ui/toast";
 import { SITE_URL } from "@/lib/supabase/config";
@@ -27,6 +28,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  // Android: shrink the layout when the keyboard opens so fixed bars and sheets stay above it.
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -45,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </ToastProvider>
         <VercelAnalytics />
         <ServiceWorkerRegister />
+        <PlatformBoot />
       </body>
     </html>
   );

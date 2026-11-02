@@ -62,7 +62,7 @@ function Goal() {
 
   return (
     <div className="animate-fade-in">
-      <Link href="/app/goals" className="mb-4 inline-flex items-center gap-1 text-sm font-semibold text-muted hover:text-fg">
+      <Link href="/app/goals" className="-ml-1 mb-2 inline-flex min-h-11 items-center gap-1 px-1 text-sm font-semibold text-muted hover:text-fg">
         <IconChevronLeft size={16} /> Goals
       </Link>
       <header className="mb-6 flex items-start justify-between gap-3">
@@ -114,7 +114,7 @@ function Goal() {
                   aria-pressed={done}
                   aria-label={done ? `Mark "${m.title}" as not reached` : `Mark "${m.title}" as reached`}
                   className={cn(
-                    "relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-xs font-bold transition-colors",
+                    "tap-44 relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-xs font-bold transition-colors",
                     done ? "border-forest-400 bg-forest-400 text-cream-50" : "border-forest-300 bg-surface text-muted hover:border-forest-500",
                   )}
                 >
@@ -127,17 +127,17 @@ function Goal() {
                   </p>
                   <button
                     type="button"
-                    className="mt-1 text-xs font-semibold text-forest-500 hover:underline"
+                    className="-my-1 inline-flex min-h-11 items-center text-xs font-semibold text-forest-500 hover:underline"
                     onClick={() => composer.newAction({ goalId: goal.id, milestoneId: m.id })}
                   >
                     + Add an action for this
                   </button>
                 </div>
                 <div className="flex flex-col">
-                  <button type="button" disabled={i === 0} onClick={() => void run((s, ctx) => moveMilestone(s, m.id, -1, ctx))} className="rounded p-1 text-muted hover:text-fg disabled:opacity-30" aria-label={`Move "${m.title}" up`}>
+                  <button type="button" disabled={i === 0} onClick={() => void run((s, ctx) => moveMilestone(s, m.id, -1, ctx))} className="flex h-10 w-10 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-fg disabled:opacity-30" aria-label={`Move "${m.title}" up`}>
                     <IconChevronUp size={16} />
                   </button>
-                  <button type="button" disabled={i === milestones.length - 1} onClick={() => void run((s, ctx) => moveMilestone(s, m.id, 1, ctx))} className="rounded p-1 text-muted hover:text-fg disabled:opacity-30" aria-label={`Move "${m.title}" down`}>
+                  <button type="button" disabled={i === milestones.length - 1} onClick={() => void run((s, ctx) => moveMilestone(s, m.id, 1, ctx))} className="flex h-10 w-10 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-fg disabled:opacity-30" aria-label={`Move "${m.title}" down`}>
                     <IconChevronDown size={16} />
                   </button>
                 </div>

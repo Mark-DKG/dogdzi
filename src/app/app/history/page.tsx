@@ -106,7 +106,7 @@ function History() {
             type="button"
             aria-pressed={filter === f}
             onClick={() => setFilter(f)}
-            className={cn("rounded-full border px-3.5 py-1.5 text-sm font-semibold", filter === f ? "border-primary bg-primary text-primary-fg" : "border-line bg-surface")}
+            className={cn("min-h-11 rounded-full border px-4 py-2 text-sm font-semibold", filter === f ? "border-primary bg-primary text-primary-fg" : "border-line bg-surface")}
           >
             {f === "outcomes" ? "Outcomes" : "Everything"}
           </button>

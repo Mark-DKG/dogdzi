@@ -44,7 +44,7 @@ export function ThemeToggle({ variant = "menu", className }: { variant?: "menu" 
       className={cn(
         variant === "menu"
           ? "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-forest-100 transition-colors hover:bg-forest-800 hover:text-cream-100"
-          : "rounded-lg p-2 text-forest-100 hover:text-cream-100",
+          : "flex h-11 w-11 items-center justify-center rounded-xl text-forest-100 hover:bg-forest-800 hover:text-cream-100",
         className,
       )}
     >

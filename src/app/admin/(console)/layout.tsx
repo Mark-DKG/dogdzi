@@ -14,7 +14,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="min-h-dvh lg:pl-60">
       <aside className="bg-forest-950 text-cream-100 lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-60 lg:flex-col">
-        <div className="flex items-center justify-between px-5 py-4 lg:block lg:py-6">
+        <div className="flex items-center justify-between px-5 pb-4 pt-[max(1rem,env(safe-area-inset-top))] lg:block lg:py-6">
           <Link href="/admin" className="flex items-center gap-3">
             <Monogram height={22} tile={false} />
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-forest-200">Admin</span>

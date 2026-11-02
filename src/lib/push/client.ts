@@ -1,19 +1,21 @@
 "use client";
 
+import { capabilities, isNativeApp } from "@/lib/platform";
+
 const VAPID = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "";
 
 export const pushConfigured = Boolean(VAPID);
 
 export function notificationsSupported(): boolean {
-  return typeof window !== "undefined" && "Notification" in window && "serviceWorker" in navigator;
+  return capabilities.notifications() && capabilities.serviceWorker();
 }
 
 export function pushSupported(): boolean {
-  return notificationsSupported() && "PushManager" in window;
+  return capabilities.webPush() && capabilities.serviceWorker();
 }
 
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
-  if (typeof window === "undefined" || !("serviceWorker" in navigator)) return null;
+  if (typeof window === "undefined" || !capabilities.serviceWorker()) return null;
   try {
     return await navigator.serviceWorker.register("/sw.js", { scope: "/" });
   } catch {
@@ -37,6 +39,7 @@ function urlBase64ToUint8Array(base64: string): Uint8Array {
 
 /** Subscribe this device to Web Push and register it with the account. */
 export async function subscribeToPush(): Promise<{ ok: true } | { ok: false; message: string }> {
+  if (isNativeApp()) return { ok: false, message: "Push reminders in the mobile app aren't available yet." };
   if (!pushSupported()) return { ok: false, message: "This browser doesn't support push notifications. On iPhone, add DOGDZI to your Home Screen first." };
   if (!pushConfigured) return { ok: false, message: "Push notifications aren't configured on this server yet." };
   const permission = await requestNotificationPermission();

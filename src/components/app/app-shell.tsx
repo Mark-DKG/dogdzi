@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { reviewQueue } from "@/lib/domain/actions";
 import { GUEST_LIMITS } from "@/lib/domain/limits";
@@ -9,9 +9,11 @@ import { getBrowserSupabase } from "@/lib/supabase/client";
 import { Monogram } from "@/components/brand/logo";
 import { IconCalendar, IconChart, IconCloudOff, IconFlag, IconHistory, IconLogout, IconPlus, IconReview, IconSettings, IconToday, IconUser } from "@/components/icons";
 import { Button, LinkButton } from "@/components/ui/button";
+import { Menu } from "@/components/ui/menu";
 import { cn } from "@/lib/utils";
 import { ComposerProvider, useComposer } from "./composer";
 import { useData } from "./data-provider";
+import { InstallBanner } from "./install-app";
 import { UpgradeDialog } from "./gate";
 import { ReminderEngine } from "./reminder-engine";
 import { SessionTracker } from "./session-tracker";
@@ -47,6 +49,7 @@ function Shell({ children }: { children: ReactNode }) {
   const path = usePathname() ?? "/app";
   const { snapshot, mode, user, status, signOut, persistent, accountsAvailable } = useData();
   const composer = useComposer();
+  const router = useRouter();
   const reviewCount = status === "ready" ? reviewQueue(snapshot).length : 0;
 
   return (
@@ -113,29 +116,31 @@ function Shell({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Mobile top bar */}
-      <header className="sticky top-0 z-30 flex items-center justify-between bg-forest-900 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] lg:hidden">
-        <Link href="/app" aria-label="DOGDZI home">
+      <header className="sticky top-0 z-30 flex items-center justify-between gap-2 bg-forest-900 pb-1 pl-4 pr-2 pt-[max(0.25rem,env(safe-area-inset-top))] lg:hidden">
+        <Link href="/app" aria-label="DOGDZI home" className="flex h-11 items-center">
           <Monogram height={22} tile={false} />
         </Link>
-        <div className="flex items-center gap-1">
-          <ThemeToggle variant="bar" />
-          <Link href="/app/history" className="rounded-lg p-2 text-forest-100" aria-label="History">
-            <IconHistory size={20} />
-          </Link>
-          <Link href="/app/insights" className="rounded-lg p-2 text-forest-100" aria-label="Insights">
-            <IconChart size={20} />
-          </Link>
+        <div className="flex items-center">
           {mode === "guest" && accountsAvailable && (
-            <Link href="/signup" className="ml-1 rounded-lg bg-cream-200 px-3 py-1.5 text-xs font-bold text-forest-900">
+            <Link href="/signup" className="mr-1 flex h-9 items-center rounded-lg bg-cream-200 px-3 text-xs font-bold text-forest-900">
               Sign up
             </Link>
           )}
+          <ThemeToggle variant="bar" />
+          <Menu
+            label="More"
+            triggerClassName="text-forest-100 hover:bg-forest-800 hover:text-cream-100"
+            items={[
+              { label: "History", icon: <IconHistory size={18} />, onSelect: () => router.push("/app/history") },
+              { label: "Insights", icon: <IconChart size={18} />, onSelect: () => router.push("/app/insights") },
+            ]}
+          />
         </div>
       </header>
 
       <Banners guest={mode === "guest" && status === "ready"} persistent={persistent} />
 
-      <main id="main" className="mx-auto w-full max-w-3xl px-4 pb-32 pt-6 sm:px-6 lg:pb-16 lg:pt-10">
+      <main id="main" className="mx-auto w-full max-w-3xl px-4 pb-[calc(10rem+env(safe-area-inset-bottom))] pt-6 sm:px-6 lg:pb-16 lg:pt-10">
         {children}
       </main>
 
@@ -143,14 +148,14 @@ function Shell({ children }: { children: ReactNode }) {
       <button
         type="button"
         onClick={() => composer.newAction()}
-        className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] right-4 z-30 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-fg shadow-xl lg:hidden"
+        className="hide-with-keyboard fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-30 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-fg shadow-xl lg:hidden"
         aria-label="New action"
       >
         <IconPlus size={26} />
       </button>
 
       {/* Mobile bottom navigation */}
-      <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
+      <nav aria-label="Main" className="hide-with-keyboard fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] backdrop-blur lg:hidden">
         <ul className="mx-auto flex max-w-md">
           {NAV.filter((n) => n.mobile).map(({ href, label, icon: Icon }) => {
             const active = isActive(path, href);
@@ -159,9 +164,9 @@ function Shell({ children }: { children: ReactNode }) {
                 <Link
                   href={href}
                   aria-current={active ? "page" : undefined}
-                  className={cn("relative flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-semibold", active ? "text-fg" : "text-muted")}
+                  className={cn("relative flex min-h-14 flex-col items-center justify-center gap-0.5 py-2 text-[11px]", active ? "font-bold text-fg" : "font-medium text-muted")}
                 >
-                  <span className={cn("rounded-full px-3 py-1", active && "bg-surface-2")}>
+                  <span className={cn("rounded-full px-3.5 py-1 transition-colors", active ? "bg-primary text-primary-fg" : "")}>
                     <Icon size={20} />
                   </span>
                   {label}
@@ -211,6 +216,8 @@ function Banners({ guest, persistent }: { guest: boolean; persistent: boolean })
           <span>Your browser is blocking storage (private mode?). Anything you add disappears when you close this tab.</span>
         </div>
       )}
+      {/* One tip at a time: the guest notice first, then the install suggestion. */}
+      {!(guest && persistent && !hideGuest) && <InstallBanner />}
       {guest && persistent && !hideGuest && (
         <div className="flex items-start gap-3 rounded-2xl border border-line bg-surface-2 px-4 py-3 text-sm">
           <IconCloudOff size={18} className="mt-0.5 shrink-0 text-muted" />
@@ -223,7 +230,7 @@ function Banners({ guest, persistent }: { guest: boolean; persistent: boolean })
           </p>
           <button
             type="button"
-            className="text-xs font-semibold text-muted hover:text-fg"
+            className="-my-2 -mr-2 flex h-11 shrink-0 items-center rounded-xl px-3 text-xs font-semibold text-muted hover:bg-surface-2 hover:text-fg"
             onClick={() => {
               sessionStorage.setItem("dogdzi:hide-guest-banner", "1");
               setHideGuest(true);

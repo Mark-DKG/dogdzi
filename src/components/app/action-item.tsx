@@ -56,13 +56,16 @@ export function ActionItem({ occurrence, showDate = false }: { occurrence: Occur
         disabled={!(open || done || needsReview)}
         aria-label={done ? `Mark "${action.title}" as not done` : `Mark "${action.title}" as done`}
         aria-pressed={done}
-        className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-          done ? "border-done bg-done text-cream-50 dark:text-forest-950" : "border-forest-300 text-transparent hover:border-forest-500 hover:text-forest-400",
-          !(open || done || needsReview) && "cursor-default",
-        )}
+        className={cn("group/check -m-1.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full", !(open || done || needsReview) && "cursor-default")}
       >
-        <IconCheck size={16} strokeWidth={2.6} />
+        <span
+          className={cn(
+            "flex h-8 w-8 items-center justify-center rounded-full border-2 transition-colors",
+            done ? "border-done bg-done text-cream-50 dark:text-forest-950" : "border-forest-300 text-transparent group-hover/check:border-forest-500 group-hover/check:text-forest-400",
+          )}
+        >
+          <IconCheck size={16} strokeWidth={2.6} />
+        </span>
       </button>
 
       <div className="min-w-0 flex-1">

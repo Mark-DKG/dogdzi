@@ -21,15 +21,15 @@ export default function Landing() {
     <div className="min-h-dvh">
       <header className="bg-forest-900 text-cream-100">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-2">
-          <Link href="/" aria-label="DOGDZI home">
+          <Link href="/" aria-label="DOGDZI home" className="flex min-h-11 items-center">
             <Monogram height={24} tile={false} />
           </Link>
           <nav className="flex items-center gap-2 text-sm font-semibold">
-            <Link href="/privacy" className="hidden rounded-lg px-3 py-2 text-forest-100 hover:text-cream-100 sm:inline">
+            <Link href="/privacy" className="hidden min-h-11 items-center rounded-lg px-3 text-forest-100 hover:text-cream-100 sm:flex">
               Privacy
             </Link>
             {isSupabaseConfigured && (
-              <Link href="/signin" className="rounded-lg px-3 py-2 text-forest-100 hover:text-cream-100">
+              <Link href="/signin" className="flex min-h-11 items-center rounded-lg px-3 text-forest-100 hover:text-cream-100">
                 Sign in
               </Link>
             )}
@@ -167,7 +167,7 @@ export default function Landing() {
             <Monogram height={20} tile={false} />
             <p className="text-xs font-medium text-forest-200">By 9DEVs</p>
           </div>
-          <nav className="flex gap-4 text-sm text-forest-100">
+          <nav className="flex gap-1 text-sm text-forest-100 [&>a]:flex [&>a]:min-h-11 [&>a]:items-center [&>a]:px-3">
             <Link href="/privacy" className="hover:text-cream-100">
               Privacy
             </Link>

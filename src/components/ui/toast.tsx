@@ -34,7 +34,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <Ctx.Provider value={api}>
       {children}
-      <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-20 z-50 flex flex-col items-center gap-2 px-4 lg:bottom-6">
+      <div aria-live="polite" className="pointer-events-none fixed inset-x-0 top-[calc(4.25rem+env(safe-area-inset-top))] z-[60] flex flex-col items-center gap-2 px-4 lg:top-auto lg:bottom-6">
         {toasts.map((t) => (
           <div
             key={t.id}
@@ -57,7 +57,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 {t.action.label}
               </button>
             )}
-            <button type="button" onClick={() => dismiss(t.id)} aria-label="Dismiss" className="rounded-lg p-1 opacity-80 hover:opacity-100">
+            <button type="button" onClick={() => dismiss(t.id)} aria-label="Dismiss" className="-my-2 -mr-2 flex h-11 w-11 items-center justify-center rounded-lg opacity-80 hover:opacity-100">
               <IconX size={16} />
             </button>
           </div>

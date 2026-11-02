@@ -170,7 +170,22 @@ update action_history set data = '{}';            -- denied
 select * from audit_log;                          -- permission denied
 ```
 
-## 7. Mobile packaging later
+## 7. Mobile app (PWA) and native packaging
+
+**Installable PWA.** `src/app/manifest.ts` (name, icons from the supplied logo, standalone display, forest-green launch colours) plus `public/sw.js`. The service worker caches only the offline page and static, content-hashed assets. It never caches API, auth, admin or page HTML responses, so private data and account state are never served stale.
+
+**Install guidance.** `src/lib/platform.ts` decides how this device installs: the browser's own prompt (Chrome, Edge, Samsung), Share → Add to Home Screen (iOS Safari), open in Safari (other iOS browsers), or the browser menu (Android/desktop). A one-time banner appears on phones, and **Settings → Install app** is always available.
+
+**Mobile layout.**
+- Safe areas: status bar, home indicator, and notches in landscape.
+- The bottom nav and the + button never cover content, and both hide while the keyboard is open.
+- Dialogs size themselves to the visible area above the keyboard, and focused fields scroll into view.
+- Inputs use 16px text on touch screens, so iOS doesn't zoom.
+- Tap targets are at least 40–44px.
+
+**Native (Capacitor) readiness.** Platform checks go through `src/lib/platform.ts` (`isNativeApp()`, `capabilities.*`). Inside a native shell the web service worker, Web Push and install prompts switch off automatically. Not done yet: native push (needs the Capacitor push plugin with APNs/FCM), background execution, and app-store packaging. Because DOGDZI uses server routes, a Capacitor build should load the deployed site (`server.url`) rather than a static export.
+
+## 8. Mobile packaging later
 
 The app is a standards-based PWA (manifest, maskable icons, service worker, standalone display). To ship to stores, wrap it with Trusted Web Activity / Bubblewrap (Android) or Capacitor (iOS and Android). The domain logic in `src/lib/domain` has no browser or Next.js dependencies and can be reused in a native client.
 

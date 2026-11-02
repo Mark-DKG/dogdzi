@@ -21,7 +21,7 @@ export function ConsentBanner() {
   };
 
   return (
-    <div role="region" aria-label="Privacy choices" className="fixed inset-x-3 bottom-24 z-40 mx-auto max-w-xl animate-slide-up rounded-2xl border border-forest-700 bg-forest-900 p-4 text-cream-100 shadow-xl lg:bottom-6">
+    <div role="region" aria-label="Privacy choices" className="hide-with-keyboard fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-50 mx-auto max-w-xl animate-slide-up rounded-2xl border border-forest-700 bg-forest-900 p-4 text-cream-100 shadow-xl lg:bottom-6">
       <p className="text-sm font-semibold text-cream-200">Help improve DOGDZI?</p>
       <p className="mt-1 text-sm text-forest-200">
         We&apos;d like to count visits, time in the app, and events like &ldquo;action completed&rdquo;. We never collect what your actions say.{" "}

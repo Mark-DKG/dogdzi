@@ -13,7 +13,7 @@ export interface MenuItem {
 }
 
 /** Small overflow menu. Arrow keys move between items, Escape closes. */
-export function Menu({ items, label = "More options" }: { items: MenuItem[]; label?: string }) {
+export function Menu({ items, label = "More options", triggerClassName, icon }: { items: MenuItem[]; label?: string; triggerClassName?: string; icon?: ReactNode }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const id = useId();
@@ -50,9 +50,9 @@ export function Menu({ items, label = "More options" }: { items: MenuItem[]; lab
         aria-controls={id}
         aria-label={label}
         onClick={() => setOpen((o) => !o)}
-        className="rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-fg"
+        className={cn("flex h-11 w-11 items-center justify-center rounded-xl text-muted hover:bg-surface-2 hover:text-fg", triggerClassName)}
       >
-        <IconMore />
+        {icon ?? <IconMore />}
       </button>
       {open && (
         <div id={id} role="menu" className="absolute right-0 z-30 mt-1 min-w-48 animate-fade-in overflow-hidden rounded-xl border border-line bg-surface py-1 shadow-xl">
@@ -67,7 +67,7 @@ export function Menu({ items, label = "More options" }: { items: MenuItem[]; lab
                 it.onSelect();
               }}
               className={cn(
-                "flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm font-medium hover:bg-surface-2 focus:bg-surface-2 focus:outline-none disabled:opacity-40",
+                "flex min-h-11 w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium hover:bg-surface-2 focus:bg-surface-2 focus:outline-none disabled:opacity-40",
                 it.tone === "danger" ? "text-missed" : "text-fg",
               )}
             >

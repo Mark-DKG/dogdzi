@@ -146,6 +146,20 @@
     background: var(--bg);
     color: var(--fg);
     font-family: var(--font-sans);
+    /* No sideways page scrolling on phones; respects notches in landscape. */
+    overflow-x: clip;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  /* Installed app: no rubber-band pull on the whole page. */
+  html[data-standalone] body {
+    overscroll-behavior-y: none;
+  }
+  button,
+  a,
+  label,
+  summary {
+    touch-action: manipulation;
   }
   :focus-visible {
     outline: 2px solid var(--ring);
@@ -162,6 +176,23 @@
 }
 
 @layer components {
+  /* Gives small visual controls a 44px touch area without changing their look. */
+  .tap-44 {
+    position: relative;
+  }
+  .tap-44::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+  /* Fixed bars that would float over the on-screen keyboard. */
+  html[data-keyboard="open"] .hide-with-keyboard {
+    display: none !important;
+  }
   .skeleton {
     background: linear-gradient(90deg, var(--skeleton-a) 25%, var(--skeleton-b) 37%, var(--skeleton-a) 63%);
     background-size: 400% 100%;
@@ -185,5 +216,15 @@
   .skeleton {
     animation: none;
     background: var(--skeleton-a);
+  }
+}
+
+/* Touch screens: 16px+ text in fields stops iOS Safari from zooming in on focus.
+   Unlayered so it wins over size utilities on individual fields. */
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: max(16px, 1em);
   }
 }

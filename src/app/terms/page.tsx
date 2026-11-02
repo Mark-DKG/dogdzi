@@ -8,9 +8,9 @@ export const metadata: Metadata = { title: "Terms of Service" };
 export default function TermsPage() {
   return (
     <div className="min-h-dvh">
-      <header className="bg-forest-900 px-5 py-5">
+      <header className="bg-forest-900 px-5 pb-5 pt-[max(1.25rem,env(safe-area-inset-top))]">
         <div className="mx-auto max-w-3xl">
-          <Link href="/" aria-label="DOGDZI home">
+          <Link href="/" aria-label="DOGDZI home" className="inline-flex min-h-11 items-center">
             <Monogram height={22} tile={false} />
           </Link>
         </div>

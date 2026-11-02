@@ -2,6 +2,7 @@
 
 import { track as vercelTrack } from "@vercel/analytics";
 import { uuid } from "@/lib/domain/ids";
+import { isStandalone } from "@/lib/platform";
 import { detectPlatform, sanitizeProps, VERCEL_EVENTS, type EventName, type Platform } from "./policy";
 
 const CONSENT_KEY = "dogdzi:consent:v1";
@@ -69,8 +70,7 @@ export function guestAnalyticsId(): string | null {
 }
 
 export function clientPlatform(): { platform: Platform; displayMode: "browser" | "standalone" } {
-  const standalone =
-    window.matchMedia?.("(display-mode: standalone)").matches || (navigator as Navigator & { standalone?: boolean }).standalone === true;
+  const standalone = isStandalone();
   return { platform: detectPlatform(navigator.userAgent, navigator.maxTouchPoints), displayMode: standalone ? "standalone" : "browser" };
 }
 

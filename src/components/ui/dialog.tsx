@@ -47,14 +47,14 @@ export function Dialog({
       }}
       aria-labelledby="dialog-title"
       className={cn(
-        "m-0 mt-auto max-h-[92dvh] w-full max-w-none overflow-hidden rounded-t-3xl border border-line bg-surface p-0 text-fg shadow-2xl",
+        "m-0 mt-auto mb-[var(--kb,0px)] max-h-[min(92dvh,calc(var(--vvh,100dvh)-0.5rem))] w-full max-w-none overflow-hidden rounded-t-3xl border border-line bg-surface p-0 text-fg shadow-2xl",
         "sm:m-auto sm:rounded-3xl",
         size === "lg" ? "sm:max-w-2xl" : "sm:max-w-lg",
         "open:animate-slide-up",
       )}
     >
       {open && (
-        <div className="flex max-h-[92dvh] flex-col">
+        <div className="flex max-h-[min(92dvh,calc(var(--vvh,100dvh)-0.5rem))] flex-col">
           <div className="flex items-start justify-between gap-4 border-b border-line px-5 pb-4 pt-5">
             <div>
               <h2 id="dialog-title" className="text-lg font-bold">
@@ -62,7 +62,7 @@ export function Dialog({
               </h2>
               {description && <p className="mt-0.5 text-sm text-muted">{description}</p>}
             </div>
-            <button type="button" onClick={onClose} className="-mr-1 rounded-lg p-1.5 text-muted hover:bg-surface-2 hover:text-fg" aria-label="Close">
+            <button type="button" onClick={onClose} className="-mr-2 -mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-muted hover:bg-surface-2 hover:text-fg" aria-label="Close">
               <IconX />
             </button>
           </div>
