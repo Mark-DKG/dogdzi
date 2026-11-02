@@ -30,7 +30,7 @@ Without Supabase variables the app runs in **guest-only mode**. Sign-up, sync an
 ## 2. Supabase setup
 
 1. Create a project at supabase.com.
-2. **SQL Editor** → run `supabase/migrations/0001_init.sql` (or `supabase db push` with the CLI). It creates every table, the RLS policies, the append-only triggers, the admin RBAC seed and the analytics functions.
+2. **SQL Editor** → run `supabase/migrations/0001_init.sql`, then `0003_server_only_account_deletion.sql` (or `supabase db push` with the CLI). It creates every table, the RLS policies, the append-only triggers, the admin RBAC seed and the analytics functions.
 3. **Authentication → URL configuration**
    - Site URL: your production URL (e.g. `https://dogdzi.app`)
    - Redirect URLs: `https://dogdzi.app/auth/callback`, `http://localhost:3000/auth/callback`
@@ -124,7 +124,7 @@ tests/                node:test suites (run with tsx)
 
 `profiles`, `user_preferences`, `notification_preferences`, `categories`, `goals`, `milestones`, `actions` (the commitment), `occurrences` (each time it's due; status lives here), `action_history` (append-only events), `accountability_responses` (append-only reason + outcome), `recovery_plans`, `push_subscriptions`, `reminders` (delivery log), `app_sessions`, `analytics_events`, `admin_roles`, `admin_permissions`, `role_permissions`, `admin_users`, `admin_permission_grants`, `audit_log`, `system_settings`.
 
-Composite foreign keys `(id, user_id)` make it impossible to link your rows to someone else's. RLS restricts every user table to `auth.uid()`. Users have **no delete policy** on content: actions are cancelled, never deleted. A trigger blocks turning a missed or skipped occurrence back into "pending". Account deletion (`delete_my_account()`) is the only path that removes history, and it removes the whole account.
+Composite foreign keys `(id, user_id)` make it impossible to link your rows to someone else's. RLS restricts every user table to `auth.uid()`. Users have **no delete policy** on content: actions are cancelled, never deleted. A trigger blocks turning a missed or skipped occurrence back into "pending". Account deletion (`/api/account/delete`, which re-checks the password and then calls `purge_user_data` with the service role) is the only path that removes history, and it removes the whole account.
 
 ### Accountability rules
 
