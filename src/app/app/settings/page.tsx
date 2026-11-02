@@ -18,6 +18,7 @@ import { IconChart, IconHistory, IconLogout } from "@/components/icons";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { ChoiceChips, Field, Input, Switch, ToggleChips } from "@/components/ui/field";
+import { PasswordInput } from "@/components/ui/password-input";
 import { SettingsSkeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
 import { Card, PageHeader } from "@/components/ui/surface";
@@ -315,7 +316,7 @@ function DeleteDialog({ guest, onClose }: { guest: boolean; onClose: () => void 
             : "This permanently deletes your account, actions, goals, history and reminders. Download your data first if you want a copy. It can't be undone."}
         </p>
         <Field label='Type "DELETE" to confirm'>{({ id }) => <Input id={id} value={confirm} onChange={(e) => setConfirm(e.target.value)} autoComplete="off" />}</Field>
-        {!guest && <Field label="Your password">{({ id }) => <Input id={id} type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />}</Field>}
+        {!guest && <Field label="Your password">{({ id }) => <PasswordInput id={id} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />}</Field>}
         {error && (
           <p role="alert" className="font-medium text-missed">
             {error}

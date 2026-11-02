@@ -7,6 +7,7 @@ import { Monogram } from "@/components/brand/logo";
 import { IconShield } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getBrowserSupabase } from "@/lib/supabase/client";
 
@@ -70,7 +71,7 @@ function Form() {
         </div>
       )}
       <Field label="Work email">{({ id }) => <Input id={id} type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required />}</Field>
-      <Field label="Password">{({ id }) => <Input id={id} type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />}</Field>
+      <Field label="Password">{({ id }) => <PasswordInput id={id} autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />}</Field>
       <Button type="submit" size="lg" className="w-full" loading={busy}>
         Continue
       </Button>

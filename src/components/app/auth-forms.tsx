@@ -8,6 +8,7 @@ import { hasGuestData, readGuestSnapshot } from "@/lib/store/local-repo";
 import { getBrowserSupabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Notice } from "@/components/ui/states";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,7 +67,7 @@ export function SignInForm() {
       )}
       <Field label="Email">{({ id }) => <Input id={id} type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} required />}</Field>
       <Field label="Password" hint={<Link href="/forgot-password" className="font-semibold underline-offset-2 hover:underline">Forgot password?</Link>}>
-        {({ id, describedBy }) => <Input id={id} aria-describedby={describedBy} type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />}
+        {({ id, describedBy }) => <PasswordInput id={id} aria-describedby={describedBy} autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />}
       </Field>
       <Button type="submit" size="lg" className="w-full" loading={busy}>
         Sign in
@@ -138,7 +139,7 @@ export function SignUpForm() {
         {({ id, describedBy, invalid }) => <Input id={id} aria-describedby={describedBy} aria-invalid={invalid} type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} />}
       </Field>
       <Field label="Password" error={errors.password} hint="At least 8 characters with a letter and a number.">
-        {({ id, describedBy, invalid }) => <Input id={id} aria-describedby={describedBy} aria-invalid={invalid} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />}
+        {({ id, describedBy, invalid }) => <PasswordInput id={id} aria-describedby={describedBy} aria-invalid={invalid} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />}
       </Field>
       <Button type="submit" size="lg" className="w-full" loading={busy}>
         Create account
@@ -217,8 +218,8 @@ export function UpdatePasswordForm() {
           {error}
         </p>
       )}
-      <Field label="New password">{({ id }) => <Input id={id} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />}</Field>
-      <Field label="Confirm new password">{({ id }) => <Input id={id} type="password" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />}</Field>
+      <Field label="New password">{({ id }) => <PasswordInput id={id} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />}</Field>
+      <Field label="Confirm new password">{({ id }) => <PasswordInput id={id} autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />}</Field>
       <Button type="submit" size="lg" className="w-full" loading={busy}>
         Update password
       </Button>

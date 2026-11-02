@@ -228,3 +228,9 @@
     font-size: max(16px, 1em);
   }
 }
+
+/* PasswordInput has its own show/hide button; hide Edge's built-in one. */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
