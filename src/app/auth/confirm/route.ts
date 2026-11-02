@@ -1,0 +1,18 @@
+import type { EmailOtpType } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
+import { getServerSupabase } from "@/lib/supabase/server";
+
+/** Handles token-hash email links (Supabase "Confirm signup" / "Reset password" templates). */
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const token_hash = url.searchParams.get("token_hash");
+  const type = url.searchParams.get("type") as EmailOtpType | null;
+  const nextParam = url.searchParams.get("next");
+  const next = nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//") ? nextParam : type === "recovery" ? "/update-password" : "/app";
+  const sb = await getServerSupabase();
+  if (token_hash && type && sb) {
+    const { error } = await sb.auth.verifyOtp({ type, token_hash });
+    if (!error) return NextResponse.redirect(new URL(next, url.origin));
+  }
+  return NextResponse.redirect(new URL("/signin?error=link", url.origin));
+}

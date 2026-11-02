@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+/*
+ * DOGDZI design tokens.
+ * Brand colours sampled from the supplied logo files:
+ *   forest #254032 (background of the full-colour lockup)
+ *   cream  #F8E7C3 (logo artwork)
+ * All text/background pairs below meet WCAG AA (≥ 4.5:1).
+ */
+@theme {
+  --color-forest-50: #eef3ef;
+  --color-forest-100: #dfe8e1;
+  --color-forest-200: #c9d6c5;
+  --color-forest-300: #a9c4b2;
+  --color-forest-400: #6a977d;
+  --color-forest-500: #4c7d63;
+  --color-forest-600: #3b654f;
+  --color-forest-700: #2f5240;
+  --color-forest-800: #2a4838;
+  --color-forest-900: #254032;
+  --color-forest-950: #172a20;
+
+  --color-cream-50: #fffdf8;
+  --color-cream-100: #fbf6ec;
+  --color-cream-200: #f8e7c3;
+  --color-cream-300: #efd8a8;
+  --color-cream-400: #e2c587;
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+  --animate-fade-in: fade-in 0.25s ease-out;
+  --animate-slide-up: slide-up 0.25s ease-out;
+
+  @keyframes shimmer {
+    0% { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+:root {
+  --bg: #fbf6ec;
+  --surface: #fffdf8;
+  --surface-2: #f4ecdb;
+  --border: #e4d9c3;
+  --fg: #1b2f25;
+  --muted: #56665b;
+  --primary: #254032;
+  --primary-fg: #f8e7c3;
+  --primary-hover: #2f5240;
+  --ring: #4c7d63;
+  --done: #2f6b4c;
+  --done-bg: #e3eee5;
+  --missed: #9a4a26;
+  --missed-bg: #f6e4d9;
+  --warn: #8a6a1f;
+  --warn-bg: #f7ecd2;
+  --skeleton-a: #efe6d3;
+  --skeleton-b: #f7f0e2;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14231b;
+    --surface: #1c3026;
+    --surface-2: #233a2e;
+    --border: #2f4a3b;
+    --fg: #f4e8cf;
+    --muted: #b3bfb1;
+    --primary: #f8e7c3;
+    --primary-fg: #1e3529;
+    --primary-hover: #efd8a8;
+    --ring: #a9c4b2;
+    --done: #9ccba9;
+    --done-bg: #20402f;
+    --missed: #e39a72;
+    --missed-bg: #3d2a1f;
+    --warn: #e2c587;
+    --warn-bg: #3a3320;
+    --skeleton-a: #22392d;
+    --skeleton-b: #2a4436;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-primary-hover: var(--primary-hover);
+  --color-ring: var(--ring);
+  --color-done: var(--done);
+  --color-done-bg: var(--done-bg);
+  --color-missed: var(--missed);
+  --color-missed-bg: var(--missed-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-cream-300);
+    color: var(--color-forest-950);
+  }
+  dialog::backdrop {
+    background: rgb(23 42 32 / 0.55);
+    backdrop-filter: blur(2px);
+  }
+}
+
+@layer components {
+  .skeleton {
+    background: linear-gradient(90deg, var(--skeleton-a) 25%, var(--skeleton-b) 37%, var(--skeleton-a) 63%);
+    background-size: 400% 100%;
+    animation: var(--animate-shimmer);
+    border-radius: 0.5rem;
+  }
+  .tracking-brand {
+    letter-spacing: 0.32em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .skeleton {
+    animation: none;
+    background: var(--skeleton-a);
+  }
+}
