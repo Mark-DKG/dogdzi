@@ -171,6 +171,9 @@ export default function Landing() {
             <Link href="/privacy" className="hover:text-cream-100">
               Privacy
             </Link>
+            <Link href="/terms" className="hover:text-cream-100">
+              Terms
+            </Link>
             <Link href="/app" className="hover:text-cream-100">
               Open app
             </Link>

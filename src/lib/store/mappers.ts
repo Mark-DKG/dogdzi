@@ -117,6 +117,8 @@ export function prefsToRows(p: Partial<Preferences>, user_id: string) {
   if (p.timezone) user.timezone = p.timezone;
   if (p.weekStartsOn !== undefined) user.week_starts_on = p.weekStartsOn;
   if (p.onboardingCompleted !== undefined) user.onboarding_completed = p.onboardingCompleted;
+  if (p.termsVersion !== undefined) user.terms_version = p.termsVersion;
+  if (p.termsAcceptedAt !== undefined) user.terms_accepted_at = p.termsAcceptedAt;
   if (p.reminderStyle) notif.reminder_style = p.reminderStyle;
   if (p.quietStart) notif.quiet_start = p.quietStart;
   if (p.quietEnd) notif.quiet_end = p.quietEnd;
@@ -140,6 +142,8 @@ export function prefsFromRows(user: Row | null, notif: Row | null, fallback: Pre
     quietEnd: hhmm(notif?.quiet_end) ?? fallback.quietEnd,
     maxNotificationsPerDay: notif?.max_per_day != null ? Number(notif.max_per_day) : fallback.maxNotificationsPerDay,
     pushEnabled: (notif?.push_enabled as boolean) ?? fallback.pushEnabled,
+    termsVersion: (user?.terms_version as string | null) ?? fallback.termsVersion,
+    termsAcceptedAt: (user?.terms_accepted_at as string | null) ?? fallback.termsAcceptedAt,
     updatedAt: String(user?.updated_at ?? fallback.updatedAt),
   };
 }

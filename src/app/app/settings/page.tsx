@@ -245,6 +245,10 @@ function Settings() {
         By 9DEVs ·{" "}
         <Link href="/privacy" className="underline">
           Privacy
+        </Link>{" "}
+        ·{" "}
+        <Link href="/terms" className="underline">
+          Terms
         </Link>
       </p>
 
