@@ -35,6 +35,11 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
   return (
     <>
       <PageHeader title="Accounts" subtitle={`${total} ${q ? "matching" : "total"}`} />
+      {sp.deleted && (
+        <p role="status" className="mb-4 rounded-xl bg-done-bg px-3.5 py-2.5 text-sm font-medium text-done">
+          {sp.deleted.slice(0, 320)} was permanently deleted. The deletion is recorded in the audit log.
+        </p>
+      )}
       <form className="mb-4 flex gap-2" action="/admin/users">
         <label htmlFor="q" className="sr-only">
           Search by email

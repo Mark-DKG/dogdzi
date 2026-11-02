@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { addAnnotation, requestContentAccess, sendPasswordReset, setSuspended } from "@/app/admin/actions";
+import { addAnnotation, deleteUserAccount, requestContentAccess, sendPasswordReset, setSuspended } from "@/app/admin/actions";
 import { AdminForm, SubmitButton } from "@/components/admin/admin-form";
-import { IconChevronLeft, IconLock } from "@/components/icons";
+import { UserContentView, UserUsageView, type UserContent, type UserUsage } from "@/components/admin/user-activity";
+import { IconAlert, IconChevronLeft, IconLock } from "@/components/icons";
 import { Badge, Card, SectionTitle, Stat } from "@/components/ui/surface";
 import { audit, requireAdmin } from "@/lib/admin/guard";
 import { isUuid } from "@/lib/domain/ids";
@@ -12,6 +13,7 @@ import { formatDuration } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Account" };
 const CONTENT_GRANT_MINUTES = 15;
+const ROWS = 200;
 
 interface Overview {
   id: string;
@@ -41,14 +43,21 @@ export default async function UserPage({ params, searchParams }: { params: Promi
 
   // Identifiable activity: analytics:user_level only, and logged.
   let activity: { sessions: number; seconds: number; days_active: number; platforms: string[] } | null = null;
+  let usage: UserUsage | null = null;
   if (admin.perms.has("analytics:user_level")) {
-    const res = await sb.rpc("admin_user_activity", { p_user: id, p_days: 30 });
+    const since30 = new Date(Date.now() - 30 * 86400000).toISOString();
+    const [res, sessions, events] = await Promise.all([
+      sb.rpc("admin_user_activity", { p_user: id, p_days: 30 }),
+      sb.from("app_sessions").select("started_at, last_seen_at, active_seconds, platform, display_mode").eq("user_id", id).gte("started_at", since30).order("started_at", { ascending: false }).limit(ROWS),
+      sb.from("analytics_events").select("name, platform, props, created_at").eq("user_id", id).gte("created_at", since30).order("created_at", { ascending: false }).limit(ROWS),
+    ]);
     activity = res.data;
+    usage = { sessions: sessions.data ?? [], events: events.data ?? [] };
     await audit(admin, { action: "analytics.user_level_view", targetType: "user", targetId: id });
   }
 
   // Content: only with content:read AND a fresh, reasoned audit entry for this admin + user.
-  let content: { actions: Record<string, unknown>[]; occurrences: Record<string, unknown>[]; history: Record<string, unknown>[] } | null = null;
+  let content: UserContent | null = null;
   if (admin.perms.has("content:read") && sp.content && isUuid(sp.content)) {
     const since = new Date(Date.now() - CONTENT_GRANT_MINUTES * 60000).toISOString();
     const { data: grant } = await sb
@@ -61,15 +70,18 @@ export default async function UserPage({ params, searchParams }: { params: Promi
       .gte("created_at", since)
       .maybeSingle();
     if (grant) {
-      const [a, o, h] = await Promise.all([
-        sb.from("actions").select("id, title, status, kind, start_date, due_time, recurrence, created_at").eq("user_id", id).order("created_at", { ascending: false }).limit(50),
-        sb.from("occurrences").select("id, action_id, scheduled_date, status, resolution").eq("user_id", id).order("scheduled_date", { ascending: false }).limit(50),
-        sb.from("action_history").select("id, action_id, event_type, data, created_at").eq("user_id", id).order("created_at", { ascending: false }).limit(50),
+      const [a, o, h, r, p, g, m] = await Promise.all([
+        sb.from("actions").select("id, title, notes, status, kind, start_date, due_time, recurrence, created_at").eq("user_id", id).order("created_at", { ascending: false }).limit(ROWS),
+        sb.from("occurrences").select("id, action_id, scheduled_date, scheduled_time, status, resolution").eq("user_id", id).order("scheduled_date", { ascending: false }).limit(ROWS),
+        sb.from("action_history").select("id, action_id, event_type, data, created_at").eq("user_id", id).order("created_at", { ascending: false }).limit(ROWS),
+        sb.from("accountability_responses").select("id, action_id, trigger, reason_code, note, outcome, created_at").eq("user_id", id).order("created_at", { ascending: false }).limit(ROWS),
+        sb.from("recovery_plans").select("id, action_id, title, steps, restart_date, status, created_at").eq("user_id", id).order("created_at", { ascending: false }).limit(ROWS),
+        sb.from("goals").select("id, title, kind, target_date, status, created_at").eq("user_id", id).order("created_at", { ascending: false }).limit(ROWS),
+        sb.from("milestones").select("id, goal_id, title, status, position").eq("user_id", id).order("position", { ascending: true }).limit(ROWS * 2),
       ]);
-      content = { actions: a.data ?? [], occurrences: o.data ?? [], history: h.data ?? [] };
+      content = { actions: a.data ?? [], occurrences: o.data ?? [], history: h.data ?? [], responses: r.data ?? [], recoveryPlans: p.data ?? [], goals: g.data ?? [], milestones: m.data ?? [] };
     }
   }
-  const titles = new Map((content?.actions ?? []).map((a) => [a.id as string, a.title as string]));
 
   return (
     <>
@@ -105,6 +117,11 @@ export default async function UserPage({ params, searchParams }: { params: Promi
             <Stat label="Days active" value={activity.days_active} />
             <Stat label="Platforms" value={activity.platforms.join(", ") || "–"} />
           </div>
+          {usage && (
+            <div className="mt-4">
+              <UserUsageView usage={usage} />
+            </div>
+          )}
         </>
       )}
 
@@ -137,7 +154,7 @@ export default async function UserPage({ params, searchParams }: { params: Promi
 
       {admin.perms.has("content:read") && (
         <>
-          <SectionTitle>User content</SectionTitle>
+          <SectionTitle>What they&apos;ve recorded</SectionTitle>
           {!content ? (
             <Card className="p-5">
               <form action={requestContentAccess} className="space-y-3">
@@ -145,7 +162,7 @@ export default async function UserPage({ params, searchParams }: { params: Promi
                 <div className="flex items-start gap-3">
                   <IconLock className="mt-0.5 text-muted" />
                   <p className="text-sm text-muted">
-                    Viewing someone&apos;s actions and history needs a support reason. It&apos;s recorded in the audit log, and access lasts {CONTENT_GRANT_MINUTES} minutes.
+                    See everything this person has recorded: actions, notes, history, the reasons they gave, goals and recovery plans. Give a reason first. It&apos;s recorded in the audit log, and access lasts {CONTENT_GRANT_MINUTES} minutes.
                   </p>
                 </div>
                 <label htmlFor="content-reason" className="block text-sm font-semibold">
@@ -153,41 +170,15 @@ export default async function UserPage({ params, searchParams }: { params: Promi
                 </label>
                 <input id="content-reason" name="reason" required minLength={10} maxLength={500} className="h-11 w-full rounded-xl border border-line bg-surface px-3.5 text-sm" />
                 {sp.content_error && <p className="text-sm font-medium text-missed">Enter a reason of at least 10 characters.</p>}
-                <SubmitButton variant="secondary">View content</SubmitButton>
+                <SubmitButton variant="secondary">View activity</SubmitButton>
               </form>
             </Card>
           ) : (
             <div className="space-y-4">
-              <p className="text-xs font-semibold text-warn">Read-only view. Access is logged. History can&apos;t be edited or deleted.</p>
-              <Card className="overflow-x-auto">
-                <table className="w-full min-w-[560px] text-left text-sm">
-                  <caption className="px-4 py-3 text-left text-sm font-bold">Recent actions</caption>
-                  <tbody>
-                    {content.actions.map((a) => (
-                      <tr key={a.id as string} className="border-t border-line">
-                        <td className="px-4 py-2.5 font-medium">{a.title as string}</td>
-                        <td className="px-4 py-2.5 text-muted">{a.kind as string}</td>
-                        <td className="px-4 py-2.5 text-muted">{a.start_date as string}</td>
-                        <td className="px-4 py-2.5">{a.status as string}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card>
-              <Card className="overflow-x-auto">
-                <table className="w-full min-w-[560px] text-left text-sm">
-                  <caption className="px-4 py-3 text-left text-sm font-bold">History</caption>
-                  <tbody>
-                    {content.history.map((h) => (
-                      <tr key={h.id as string} className="border-t border-line">
-                        <td className="px-4 py-2.5 text-muted">{fmt(h.created_at as string)}</td>
-                        <td className="px-4 py-2.5 font-medium">{(h.event_type as string).replace(/_/g, " ")}</td>
-                        <td className="px-4 py-2.5">{titles.get(h.action_id as string) ?? "–"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card>
+              <p className="text-xs font-semibold text-warn">
+                Read-only view, open for {CONTENT_GRANT_MINUTES} minutes. Access is logged. History can&apos;t be edited. Showing the latest {ROWS} of each.
+              </p>
+              <UserContentView content={content} />
               {admin.perms.has("content:write") && content.actions.length > 0 && (
                 <Card className="p-5">
                   <AdminForm action={addAnnotation}>
@@ -210,6 +201,41 @@ export default async function UserPage({ params, searchParams }: { params: Promi
               )}
             </div>
           )}
+        </>
+      )}
+
+      {admin.perms.has("accounts:delete") && (
+        <>
+          <SectionTitle>Danger zone</SectionTitle>
+          <Card className="border-missed/40 p-5">
+            {u.is_admin || id === admin.userId ? (
+              <p className="text-sm text-muted">
+                {id === admin.userId ? "You can't delete your own account from here." : "This is an admin account. Remove their admin access in Admin team before deleting it."}
+              </p>
+            ) : (
+              <AdminForm action={deleteUserAccount}>
+                <input type="hidden" name="userId" value={id} />
+                <div className="flex items-start gap-3">
+                  <IconAlert className="mt-0.5 shrink-0 text-missed" />
+                  <div>
+                    <p className="text-sm font-semibold">Delete this account permanently</p>
+                    <p className="text-xs text-muted">
+                      Removes the sign-in, all actions, history, reasons, goals, recovery plans and push devices. This can&apos;t be undone. Usage analytics are kept without a link to the person. The deletion is recorded in the audit log.
+                    </p>
+                  </div>
+                </div>
+                <label htmlFor="delete-reason" className="block text-sm font-semibold">
+                  Reason
+                </label>
+                <input id="delete-reason" name="reason" required minLength={5} maxLength={500} placeholder="e.g. User request, ticket #123" className="h-11 w-full rounded-xl border border-line bg-surface px-3.5 text-sm" />
+                <label htmlFor="delete-confirm" className="block text-sm font-semibold">
+                  Type <span className="select-all font-mono text-missed">{u.email}</span> to confirm
+                </label>
+                <input id="delete-confirm" name="confirmEmail" required autoComplete="off" spellCheck={false} className="h-11 w-full rounded-xl border border-line bg-surface px-3.5 text-sm" />
+                <SubmitButton variant="danger">Delete account permanently</SubmitButton>
+              </AdminForm>
+            )}
+          </Card>
         </>
       )}
     </>

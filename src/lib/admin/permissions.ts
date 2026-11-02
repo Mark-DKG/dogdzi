@@ -10,6 +10,7 @@ export type AdminRole = (typeof ADMIN_ROLES)[number];
 export const PERMISSIONS = [
   "accounts:read",
   "accounts:write",
+  "accounts:delete",
   "content:read",
   "content:write",
   "analytics:read",
@@ -20,7 +21,7 @@ export const PERMISSIONS = [
 ] as const;
 export type Permission = (typeof PERMISSIONS)[number];
 
-export const WRITE_PERMISSIONS: ReadonlySet<Permission> = new Set(["accounts:write", "content:write", "admins:manage", "settings:manage"]);
+export const WRITE_PERMISSIONS: ReadonlySet<Permission> = new Set(["accounts:write", "accounts:delete", "content:write", "admins:manage", "settings:manage"]);
 
 export const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
   super_admin: PERMISSIONS,
@@ -69,6 +70,15 @@ export interface RoleChangeCheck {
   targetCurrentRole: AdminRole | null;
   newRole: AdminRole | null; // null = remove admin access
   activeSuperAdmins: number;
+}
+
+/** Guard rails for permanently deleting a user's account. Returns an error message, or null when allowed. */
+export function checkAccountDeletion(c: { actorPerms: ReadonlySet<Permission>; actorId: string; targetId: string; targetEmail: string | null; confirmEmail: string; targetIsAdmin: boolean }): string | null {
+  if (!c.actorPerms.has("accounts:delete")) return "Only super admins can delete accounts.";
+  if (c.actorId === c.targetId) return "You can't delete your own account from the admin console.";
+  if (c.targetIsAdmin) return "This is an admin account. Remove their admin access in Admin team first.";
+  if (!c.targetEmail || c.confirmEmail.trim().toLowerCase() !== c.targetEmail.toLowerCase()) return "Type the account's email address exactly to confirm.";
+  return null;
 }
 
 /** Guard rails for changing admin access. Returns an error message, or null when allowed. */

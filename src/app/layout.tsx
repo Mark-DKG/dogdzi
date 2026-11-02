@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
-import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { VercelAnalytics } from "@/components/analytics/vercel-analytics";
 import { PlatformBoot } from "@/components/app/platform-boot";
 import { ServiceWorkerRegister } from "@/components/app/sw-register";
@@ -44,7 +43,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <ToastProvider>
           {children}
-          <ConsentBanner />
         </ToastProvider>
         <VercelAnalytics />
         <ServiceWorkerRegister />

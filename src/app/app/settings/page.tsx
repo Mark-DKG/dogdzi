@@ -7,7 +7,6 @@ import { isValidHHMM } from "@/lib/domain/dates";
 import { STYLE_DESCRIPTIONS } from "@/lib/domain/reminders";
 import { AREA_META } from "@/lib/domain/snapshot";
 import { LIFE_AREAS, REMINDER_STYLES, type LifeArea, type ReminderStyle } from "@/lib/domain/types";
-import { analyticsAllowed, writeConsent } from "@/lib/analytics/client";
 import { notificationsSupported, pushConfigured, requestNotificationPermission, subscribeToPush, unsubscribeFromPush } from "@/lib/push/client";
 import { GUEST_KEY } from "@/lib/store/local-repo";
 import { useData } from "@/components/app/data-provider";
@@ -48,7 +47,6 @@ function Settings() {
   const [maxPerDay, setMaxPerDay] = useState(String(p.maxNotificationsPerDay));
   const [newCat, setNewCat] = useState("");
   const [permission, setPermission] = useState<NotificationPermission | "unsupported">("default");
-  const [consent, setConsent] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [pushBusy, setPushBusy] = useState(false);
 
@@ -63,7 +61,6 @@ function Settings() {
 
   useEffect(() => {
     setPermission(notificationsSupported() ? Notification.permission : "unsupported");
-    setConsent(analyticsAllowed());
   }, []);
 
   const save = (changes: Parameters<typeof updatePreferences>[1], msg = "Saved") => void run((s, ctx) => updatePreferences(s, changes, ctx), { success: msg });
@@ -246,15 +243,9 @@ function Settings() {
       </Section>
 
       <Section title="Privacy & data">
-        <Switch
-          label="Anonymous usage analytics"
-          description="Visits, time in the app and events like 'action completed'. Never what your actions say."
-          checked={consent}
-          onChange={(v) => {
-            writeConsent(v);
-            setConsent(v);
-          }}
-        />
+        <p className="text-sm text-muted">
+          DOGDZI records usage analytics (visits, time in the app, device type and events like &ldquo;action completed&rdquo;) to run and improve the service. Analytics never include what your actions, notes or reasons say.
+        </p>
         <div className="flex flex-wrap gap-2">
           <Button variant="secondary" size="sm" onClick={exportData}>
             Download my data (JSON)

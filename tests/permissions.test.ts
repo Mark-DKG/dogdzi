@@ -1,10 +1,15 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { deniedRedirect, evaluateAdminAccess, type AccessDeps } from "../src/lib/admin/access";
-import { ADMIN_ROLES, checkGrant, checkRoleChange, effectivePermissions, PERMISSIONS, ROLE_PERMISSIONS, WRITE_PERMISSIONS } from "../src/lib/admin/permissions";
+import { ADMIN_ROLES, checkAccountDeletion, checkGrant, checkRoleChange, effectivePermissions, PERMISSIONS, ROLE_PERMISSIONS, WRITE_PERMISSIONS } from "../src/lib/admin/permissions";
 
-const SQL = readFileSync(new URL("../supabase/migrations/0001_init.sql", import.meta.url), "utf8");
+const MIGRATIONS = new URL("../supabase/migrations/", import.meta.url);
+const SQL = readdirSync(MIGRATIONS)
+  .filter((f) => f.endsWith(".sql"))
+  .sort()
+  .map((f) => readFileSync(new URL(f, MIGRATIONS), "utf8"))
+  .join("\n");
 
 test("role matrix: read-only admins can never write; support can't manage admins or settings", () => {
   for (const p of ROLE_PERMISSIONS.readonly_admin) assert.ok(!WRITE_PERMISSIONS.has(p), `${p} must not be writable for readonly`);
@@ -67,9 +72,20 @@ test("admin access: every denial path and the happy path", async () => {
   assert.equal(deniedRedirect("forbidden"), "/admin?error=forbidden");
 });
 
+test("account deletion: super admins only, never self or another admin, email must match", () => {
+  const superP = effectivePermissions("super_admin");
+  const base = { actorPerms: superP, actorId: "a", targetId: "u", targetEmail: "Ama@Example.com", confirmEmail: " ama@example.com ", targetIsAdmin: false };
+  assert.equal(checkAccountDeletion(base), null);
+  assert.ok(!effectivePermissions("support_admin", ["accounts:delete"]).has("accounts:delete"), "deletion can't be granted individually");
+  assert.match(checkAccountDeletion({ ...base, actorPerms: effectivePermissions("support_admin") })!, /super admins/);
+  assert.match(checkAccountDeletion({ ...base, targetId: "a" })!, /own account/);
+  assert.match(checkAccountDeletion({ ...base, targetIsAdmin: true })!, /admin access/);
+  assert.match(checkAccountDeletion({ ...base, confirmEmail: "someone@else.com" })!, /email/);
+});
+
 test("SQL seed matches the TypeScript permission matrix", () => {
-  const seed = SQL.slice(SQL.indexOf("insert into public.role_permissions"));
-  const pairs = new Set(Array.from(seed.slice(0, seed.indexOf(";")).matchAll(/\('(\w+)',\s*'([\w:]+)'\)/g), (m) => `${m[1]}|${m[2]}`));
+  const inserts = SQL.split("insert into public.role_permissions").slice(1).map((s) => s.slice(0, s.indexOf(";")));
+  const pairs = new Set(inserts.flatMap((s) => Array.from(s.matchAll(/\('(\w+)',\s*'([\w:]+)'\)/g), (m) => `${m[1]}|${m[2]}`)));
   const expected = new Set(ADMIN_ROLES.flatMap((r) => ROLE_PERMISSIONS[r].map((p) => `${r}|${p}`)));
   assert.deepEqual([...pairs].sort(), [...expected].sort());
   for (const p of PERMISSIONS) assert.ok(SQL.includes(`('${p}',`), `permission ${p} is seeded`);

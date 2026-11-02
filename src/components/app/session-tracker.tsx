@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { analyticsAllowed, clientPlatform, guestAnalyticsId, onConsentChange, sendTelemetry } from "@/lib/analytics/client";
+import { analyticsAllowed, clearLegacyConsent, clientPlatform, guestAnalyticsId, sendTelemetry } from "@/lib/analytics/client";
 import { HEARTBEAT_MS, IDLE_MS } from "@/lib/analytics/policy";
 import { uuid } from "@/lib/domain/ids";
 
@@ -9,7 +9,7 @@ import { uuid } from "@/lib/domain/ids";
  * Estimates time spent in the app: a session starts when the app is used,
  * heartbeats every minute while the tab is visible and someone interacted in
  * the last 5 minutes, and ends after 5 idle minutes or when the tab closes.
- * Runs only with analytics consent. Figures are estimates by design.
+ * Figures are estimates by design.
  */
 export function SessionTracker({ signedIn }: { signedIn: boolean }) {
   useEffect(() => {
@@ -46,19 +46,18 @@ export function SessionTracker({ signedIn }: { signedIn: boolean }) {
     };
     const onHide = () => end(true);
 
+    clearLegacyConsent();
     start();
     timer = setInterval(beat, HEARTBEAT_MS);
     const events = ["pointerdown", "keydown", "scroll", "touchstart"] as const;
     events.forEach((e) => window.addEventListener(e, interact, { passive: true }));
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("pagehide", onHide);
-    const offConsent = onConsentChange(() => (analyticsAllowed() ? start() : end()));
     return () => {
       if (timer) clearInterval(timer);
       events.forEach((e) => window.removeEventListener(e, interact));
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("pagehide", onHide);
-      offConsent();
       end(true);
     };
   }, [signedIn]);

@@ -5,7 +5,7 @@
  * DRAFT: have this reviewed by a qualified lawyer before launch.
  */
 
-export const TERMS_VERSION = "2026-11-02";
+export const TERMS_VERSION = "2026-11-02.2";
 export const TERMS_UPDATED = "2 November 2026";
 
 export interface TermsSection {
@@ -53,7 +53,8 @@ export const TERMS: TermsSection[] = [
     id: "content",
     title: "5. Your content",
     body: [
-      "You own the actions, notes, goals, reasons and other content you add (“Your Content”). You give us permission to store, process and display Your Content only as needed to run the Service for you, as described in our Privacy Notice.",
+      "You own the actions, notes, goals, reasons and other content you add (“Your Content”). You give us permission to store, process and display Your Content as needed to run the Service for you, provide support, keep the Service safe and enforce these Terms, as described in our Privacy Notice. Authorised administrators may view Your Content and your usage activity for these purposes, and each access is logged.",
+      "We collect usage analytics from everyone who uses the Service, as described in our Privacy Notice. This is part of the Service and cannot be switched off.",
       "You are responsible for Your Content. Do not add anything unlawful, or information about other people that you do not have the right to share.",
     ],
   },
@@ -113,7 +114,7 @@ export const TERMS: TermsSection[] = [
     id: "termination",
     title: "12. Suspension and termination",
     body: [
-      "You may stop using the Service and delete your account at any time from Settings. We may suspend or close your access if you breach these Terms, if required by law, or to protect the Service or other users. Sections 8 to 11 and 14 continue to apply after your access ends.",
+      "You may stop using the Service and delete your account at any time from Settings. We may suspend or close your access, or permanently delete your account and Your Content, if you breach these Terms, if required by law, or to protect the Service or other users. Sections 8 to 11 and 14 continue to apply after your access ends.",
     ],
   },
   {

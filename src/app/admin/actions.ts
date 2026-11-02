@@ -10,7 +10,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { audit, checkAdmin, requireAdmin } from "@/lib/admin/guard";
-import { ADMIN_ROLES, checkGrant, checkRoleChange, isAdminRole } from "@/lib/admin/permissions";
+import { ADMIN_ROLES, checkAccountDeletion, checkGrant, checkRoleChange, isAdminRole } from "@/lib/admin/permissions";
 import { uuid } from "@/lib/domain/ids";
 import { SITE_URL } from "@/lib/supabase/config";
 import { getServiceSupabase } from "@/lib/supabase/server";
@@ -64,6 +64,50 @@ export async function sendPasswordReset(_prev: ActionResult | null, form: FormDa
   await audit(admin, { action: "account.password_reset_sent", targetType: "user", targetId: userId.data });
   const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: `${SITE_URL}/auth/callback?next=/update-password` });
   return error ? { ok: false, message: "Couldn't send the email." } : { ok: true, message: `Reset link sent to ${email}.` };
+}
+
+/**
+ * Permanently delete a user's account and everything in it. Super admins only;
+ * needs a reason and the account's email typed back. The audit entry is
+ * written first, so a deletion can never happen unlogged.
+ */
+export async function deleteUserAccount(_prev: ActionResult | null, form: FormData): Promise<ActionResult> {
+  const admin = await requireAdmin("accounts:delete");
+  const parsed = z
+    .object({ userId: uuidSchema, confirmEmail: z.string().max(320), reason: z.string().trim().min(5, "Give a reason (at least 5 characters).").max(500) })
+    .safeParse({ userId: form.get("userId"), confirmEmail: form.get("confirmEmail") ?? "", reason: form.get("reason") });
+  if (!parsed.success) return { ok: false, message: parsed.error.issues[0]?.message ?? "Invalid input." };
+  const { userId, confirmEmail, reason } = parsed.data;
+  const sb = service();
+  const [{ data: target }, { data: adminRow }] = await Promise.all([
+    sb.auth.admin.getUserById(userId),
+    sb.from("admin_users").select("user_id").eq("user_id", userId).maybeSingle(),
+  ]);
+  if (!target.user) return { ok: false, message: "That account no longer exists." };
+  const problem = checkAccountDeletion({
+    actorPerms: admin.perms,
+    actorId: admin.userId,
+    targetId: userId,
+    targetEmail: target.user.email ?? null,
+    confirmEmail,
+    targetIsAdmin: !!adminRow,
+  });
+  if (problem) return { ok: false, message: problem };
+
+  await audit(admin, {
+    action: "account.delete",
+    targetType: "user",
+    targetId: userId,
+    reason,
+    metadata: { email: target.user.email, created_at: target.user.created_at },
+  });
+  const { error } = await sb.rpc("purge_user_data", { p_user: userId });
+  if (error) {
+    console.error("[dogdzi] admin delete failed", error.message);
+    return { ok: false, message: "Couldn't delete the account. Nothing was removed; please try again." };
+  }
+  revalidatePath("/admin/users");
+  redirect(`/admin/users?deleted=${encodeURIComponent(target.user.email ?? "account")}`);
 }
 
 /* ───────────────────────────── content ───────────────────────────── */

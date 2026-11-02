@@ -99,7 +99,6 @@ While the app is open, guests and accounts also get in-app reminders without any
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | public | for accounts | Anon key (safe in the browser; RLS protects data) |
 | `SUPABASE_SERVICE_ROLE_KEY` | **server only** | for admin, telemetry, cron | Bypasses RLS. Only used in server code after permission checks. Never prefix with `NEXT_PUBLIC_`. |
 | `ADMIN_REQUIRE_MFA` | server | recommended | `true` (default) requires authenticator-app verification (AAL2) for the console |
-| `NEXT_PUBLIC_ANALYTICS_CONSENT_MODE` | public | no | `opt-in` (default): nothing is measured until the visitor allows it. `opt-out`: only where lawful. |
 | `NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` / `VAPID_SUBJECT` | public / **server** / server | for push | Generate with `npm run vapid:generate` |
 | `CRON_SECRET` | server | for push | Protects the reminder endpoint |
 | `VERCEL_API_TOKEN` / `VERCEL_PROJECT_ID` / `VERCEL_TEAM_ID` | server | optional | Shows Vercel page-view totals in the admin dashboard |
@@ -111,7 +110,7 @@ src/lib/domain/       Pure business logic (actions, occurrences, recurrence, mis
                       accountability, recovery, reminders, guest limits, insights). Fully unit-tested.
 src/lib/store/        Storage: LocalRepo (guest, browser), SupabaseRepo (accounts), guest → account migration
 src/lib/admin/        RBAC matrix, access decision (testable), server guard + audit writer
-src/lib/analytics/    Consent, privacy filtering, session heartbeat rules, Vercel API client
+src/lib/analytics/    Privacy filtering, session heartbeat rules, Vercel API client
 src/lib/push/         Web Push client, server sender, reminder dispatch selection
 src/components/       UI kit (buttons, fields, dialogs, skeletons, empty/error states), app and admin components
 src/app/              Routes: landing, auth, onboarding, /app/*, /admin/*, /api/*
@@ -139,7 +138,7 @@ Composite foreign keys `(id, user_id)` make it impossible to link your rows to s
 
 ### Sessions and time spent
 
-With consent only, the client starts a session, sends a heartbeat every 60 seconds while the tab is visible and someone interacted within 5 minutes, and ends it after 5 idle minutes or when the tab closes. The server ignores gaps longer than 6 minutes and caps sessions at 24 hours. Figures are labelled as **estimates**. Vercel Analytics is used for page views and selected events only. Titles, notes and reasons are never sent to any analytics provider.
+Usage analytics run for every visitor (there is no opt-out; the privacy notice says so). The client starts a session, sends a heartbeat every 60 seconds while the tab is visible and someone interacted within 5 minutes, and ends it after 5 idle minutes or when the tab closes. The server ignores gaps longer than 6 minutes and caps sessions at 24 hours. Figures are labelled as **estimates**. Vercel Analytics is used for page views and selected events only. Titles, notes and reasons are never sent to any analytics provider.
 
 ## 6. Status: verified, mocked, or needing configuration
 

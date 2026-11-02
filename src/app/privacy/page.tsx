@@ -7,10 +7,9 @@ export const metadata: Metadata = { title: "Privacy notice" };
 const STORAGE = [
   ["Supabase auth cookies (sb-…)", "Keep you signed in securely", "Essential", "Until you sign out or the session expires"],
   ["dogdzi:guest:v1 (browser storage)", "Holds a guest's actions, goals and history on this device", "Essential", "Until you sign up, erase it, or clear site data"],
-  ["dogdzi:consent:v1 (browser storage)", "Remembers your analytics choice", "Essential", "Until you change it"],
   ["dogdzi:reminders-sent (browser storage)", "Prevents duplicate reminders", "Essential", "Resets daily"],
-  ["dogdzi:guest-id (browser storage)", "Random id to count guest sessions", "Analytics, only with consent", "Deleted if you turn analytics off"],
-  ["Vercel Web Analytics", "Anonymous page views (no cookies)", "Analytics, only with consent", "Aggregated by Vercel"],
+  ["dogdzi:guest-id (browser storage)", "Random id to count guest sessions", "Analytics", "Until you clear site data"],
+  ["Vercel Web Analytics", "Anonymous page views (no cookies)", "Analytics", "Aggregated by Vercel"],
 ];
 
 export default function PrivacyPage() {
@@ -42,7 +41,7 @@ export default function PrivacyPage() {
             <b>Push subscriptions</b>: if you turn on push reminders, your browser&apos;s push endpoint, so we can deliver them.
           </li>
           <li>
-            <b>Usage analytics (optional)</b>: only if you allow it. Session start/end and estimated time in the app, your device type, and events such as &ldquo;action completed&rdquo;. We never send action titles, notes or reasons to analytics.
+            <b>Usage analytics</b>: collected for everyone who uses DOGDZI, because we need it to run, secure and improve the service. Session start/end and estimated time in the app, your device type, and events such as &ldquo;action completed&rdquo;. For signed-in users these are linked to your account. We never send action titles, notes or reasons to analytics, and we don&apos;t use them for advertising.
           </li>
         </ul>
 
@@ -70,18 +69,17 @@ export default function PrivacyPage() {
             </tbody>
           </table>
         </div>
-        <p className="mt-3 text-sm text-muted">We use no advertising or cross-site tracking. You can change your analytics choice in Settings at any time.</p>
+        <p className="mt-3 text-sm text-muted">We use no advertising or cross-site tracking. Usage analytics are part of the service and can&apos;t be switched off; if you don&apos;t want them, please don&apos;t use DOGDZI.</p>
 
         <h2 className="mt-10 text-xl font-bold">Who can see your data</h2>
         <p className="mt-3">
-          Database rules ensure only you can read your content. A small number of DOGDZI staff can access account details to provide support. Access to your content needs a specific permission and a recorded reason, and every access is logged. Staff cannot edit or erase your accountability history.
+          Database rules ensure other users can never read your content. Authorised DOGDZI administrators can view your account details, your content (actions, goals, history, the reasons and notes you record, and recovery plans) and your usage activity to provide support, keep the service safe and enforce our Terms. Every such access is recorded in an audit log. Administrators can suspend or permanently delete an account, for example for a breach of our Terms or at your request. Staff cannot edit your accountability history.
         </p>
 
         <h2 className="mt-10 text-xl font-bold">Your choices</h2>
         <ul className="mt-3 list-disc space-y-2 pl-5">
           <li>Download a copy of your data from Settings.</li>
-          <li>Turn analytics on or off in Settings.</li>
-          <li>Delete your account from Settings. This permanently removes your content. Anonymous usage counts are kept with no link to you.</li>
+          <li>Delete your account from Settings. This permanently removes your content. Usage analytics are kept with no link to you. The same applies if an administrator deletes your account.</li>
         </ul>
 
         <h2 className="mt-10 text-xl font-bold">Processors</h2>
