@@ -106,7 +106,7 @@ export function AnalyticsView({ data, pageViews }: { data: AdminAnalytics; pageV
         />
       </div>
       <p className="pt-4 text-xs text-muted">
-        Time spent is estimated from first-party heartbeats (1-minute intervals, sessions end after 5 idle minutes) and covers every visitor. *Guest figures come from usage
+        Time spent is estimated from first-party heartbeats (1-minute intervals, sessions end after 5 idle minutes) and covers everyone who hasn&apos;t turned analytics off. *Guest figures come from usage
         events, because guest content never leaves the device. Registered action counts come from the database and aren&apos;t filtered by platform.
       </p>
     </div>

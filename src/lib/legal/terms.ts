@@ -53,8 +53,7 @@ export const TERMS: TermsSection[] = [
     id: "content",
     title: "5. Your content",
     body: [
-      "You own the actions, notes, goals, reasons and other content you add (“Your Content”). You give us permission to store, process and display Your Content as needed to run the Service for you, provide support, keep the Service safe and enforce these Terms, as described in our Privacy Notice. Authorised administrators may view Your Content and your usage activity for these purposes, and each access is logged.",
-      "We collect usage analytics from everyone who uses the Service, as described in our Privacy Notice. This is part of the Service and cannot be switched off.",
+      "You own the actions, notes, goals, reasons and other content you add (“Your Content”). You give us permission to store, process and display Your Content as needed to run the Service for you, provide support, keep the Service safe and enforce these Terms, as described in our Privacy Notice.",
       "You are responsible for Your Content. Do not add anything unlawful, or information about other people that you do not have the right to share.",
     ],
   },

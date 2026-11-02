@@ -7,13 +7,36 @@ import { detectPlatform, sanitizeProps, VERCEL_EVENTS, type EventName, type Plat
 
 const GUEST_ID_KEY = "dogdzi:guest-id";
 const LEGACY_CONSENT_KEY = "dogdzi:consent:v1";
+/** Set to "off" when someone turns analytics off in Settings. On by default. */
+const ANALYTICS_KEY = "dogdzi:analytics";
 
-/**
- * Usage analytics are part of the service and run for every visitor (see the
- * privacy notice). Only false during server rendering.
- */
+const listeners = new Set<() => void>();
+export function onAnalyticsChange(fn: () => void): () => void {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}
+
+/** Usage analytics are on unless this browser has turned them off in Settings. */
 export function analyticsAllowed(): boolean {
-  return typeof window !== "undefined";
+  if (typeof window === "undefined") return false;
+  try {
+    return localStorage.getItem(ANALYTICS_KEY) !== "off";
+  } catch {
+    return true;
+  }
+}
+
+export function setAnalyticsEnabled(on: boolean) {
+  try {
+    if (on) localStorage.removeItem(ANALYTICS_KEY);
+    else {
+      localStorage.setItem(ANALYTICS_KEY, "off");
+      localStorage.removeItem(GUEST_ID_KEY);
+    }
+  } catch {
+    /* storage unavailable */
+  }
+  listeners.forEach((l) => l());
 }
 
 /** Remove the old analytics-choice key left by earlier versions. */
@@ -58,7 +81,7 @@ export function sendTelemetry(body: Record<string, unknown>, beacon = false) {
   }
 }
 
-/** Record a product event. Never includes action titles, notes or reasons. */
+/** Record a product event (unless analytics are off). Never includes action titles, notes or reasons. */
 export function trackEvent(name: EventName, props: Record<string, unknown> = {}) {
   if (!analyticsAllowed()) return;
   const safe = sanitizeProps(props);

@@ -17,6 +17,7 @@ import { IconChart, IconHistory, IconLogout } from "@/components/icons";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { ChoiceChips, Field, Input, Switch, ToggleChips } from "@/components/ui/field";
+import { analyticsAllowed, setAnalyticsEnabled } from "@/lib/analytics/client";
 import { FIRST_NAME_MAX, normalizeFirstName } from "@/lib/domain/names";
 import { PasswordInput } from "@/components/ui/password-input";
 import { SettingsSkeleton } from "@/components/ui/skeleton";
@@ -49,6 +50,7 @@ function Settings() {
   const [permission, setPermission] = useState<NotificationPermission | "unsupported">("default");
   const [deleting, setDeleting] = useState(false);
   const [pushBusy, setPushBusy] = useState(false);
+  const [analyticsOn, setAnalyticsOn] = useState(true);
 
   useEffect(() => {
     // Arriving from "Add your first name" on Today: bring the field into view and focus it.
@@ -57,6 +59,10 @@ function Settings() {
       form?.scrollIntoView({ block: "center" });
       form?.querySelector("input")?.focus({ preventScroll: true });
     }
+  }, []);
+
+  useEffect(() => {
+    setAnalyticsOn(analyticsAllowed());
   }, []);
 
   useEffect(() => {
@@ -243,9 +249,16 @@ function Settings() {
       </Section>
 
       <Section title="Privacy & data">
-        <p className="text-sm text-muted">
-          DOGDZI records usage analytics (visits, time in the app, device type and events like &ldquo;action completed&rdquo;) to run and improve the service. Analytics never include what your actions, notes or reasons say.
-        </p>
+        <Switch
+          label="Usage analytics"
+          description="Visits, time in the app, device type and events like 'action completed'. Helps us improve DOGDZI. Never what your actions, notes or reasons say. Saved on this device."
+          checked={analyticsOn}
+          onChange={(v) => {
+            setAnalyticsEnabled(v);
+            setAnalyticsOn(v);
+            toast.show(v ? "Usage analytics on" : "Usage analytics off");
+          }}
+        />
         <div className="flex flex-wrap gap-2">
           <Button variant="secondary" size="sm" onClick={exportData}>
             Download my data (JSON)

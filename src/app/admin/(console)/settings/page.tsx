@@ -18,7 +18,7 @@ export default async function SettingsPage() {
     ["Web Push (VAPID keys)", Boolean(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY), "Generate with npm run vapid:generate"],
     ["Reminder cron secret", Boolean(process.env.CRON_SECRET), "Set CRON_SECRET and schedule /api/cron/reminders"],
     ["Vercel Analytics API (admin page views)", vercelAnalyticsConfigured, "Optional: VERCEL_API_TOKEN + VERCEL_PROJECT_ID"],
-    ["Usage analytics", true, "Always on for every visitor"],
+    ["Usage analytics", true, "On by default; people can turn it off in Settings"],
   ];
 
   return (

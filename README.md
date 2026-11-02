@@ -138,7 +138,7 @@ Composite foreign keys `(id, user_id)` make it impossible to link your rows to s
 
 ### Sessions and time spent
 
-Usage analytics run for every visitor (there is no opt-out; the privacy notice says so). The client starts a session, sends a heartbeat every 60 seconds while the tab is visible and someone interacted within 5 minutes, and ends it after 5 idle minutes or when the tab closes. The server ignores gaps longer than 6 minutes and caps sessions at 24 hours. Figures are labelled as **estimates**. Vercel Analytics is used for page views and selected events only. Titles, notes and reasons are never sent to any analytics provider.
+Usage analytics are on by default; anyone can turn them off in Settings (stored per device as `dogdzi:analytics=off`). The client starts a session, sends a heartbeat every 60 seconds while the tab is visible and someone interacted within 5 minutes, and ends it after 5 idle minutes or when the tab closes. The server ignores gaps longer than 6 minutes and caps sessions at 24 hours. Figures are labelled as **estimates**. Vercel Analytics is used for page views and selected events only. Titles, notes and reasons are never sent to any analytics provider.
 
 ## 6. Status: verified, mocked, or needing configuration
 

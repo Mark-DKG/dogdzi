@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { analyticsAllowed, clearLegacyConsent, clientPlatform, guestAnalyticsId, sendTelemetry } from "@/lib/analytics/client";
+import { analyticsAllowed, clearLegacyConsent, clientPlatform, guestAnalyticsId, onAnalyticsChange, sendTelemetry } from "@/lib/analytics/client";
 import { HEARTBEAT_MS, IDLE_MS } from "@/lib/analytics/policy";
 import { uuid } from "@/lib/domain/ids";
 
@@ -53,11 +53,13 @@ export function SessionTracker({ signedIn }: { signedIn: boolean }) {
     events.forEach((e) => window.addEventListener(e, interact, { passive: true }));
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("pagehide", onHide);
+    const offChange = onAnalyticsChange(() => (analyticsAllowed() ? start() : end()));
     return () => {
       if (timer) clearInterval(timer);
       events.forEach((e) => window.removeEventListener(e, interact));
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("pagehide", onHide);
+      offChange();
       end(true);
     };
   }, [signedIn]);
