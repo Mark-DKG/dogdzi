@@ -30,7 +30,7 @@ Without Supabase variables the app runs in **guest-only mode**. Sign-up, sync an
 ## 2. Supabase setup
 
 1. Create a project at supabase.com.
-2. **SQL Editor** → run `supabase/migrations/0001_init.sql` (or `supabase db push` with the CLI). It creates every table, the RLS policies, the append-only triggers, the admin RBAC seed and the analytics functions.
+2. **SQL Editor** → run `supabase/migrations/0001_init.sql`, then `0002_terms_acceptance.sql` (or `supabase db push` with the CLI). It creates every table, the RLS policies, the append-only triggers, the admin RBAC seed and the analytics functions.
 3. **Authentication → URL configuration**
    - Site URL: your production URL (e.g. `https://dogdzi.app`)
    - Redirect URLs: `https://dogdzi.app/auth/callback`, `http://localhost:3000/auth/callback`

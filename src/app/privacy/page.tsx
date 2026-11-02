@@ -88,7 +88,11 @@ export default function PrivacyPage() {
         <p className="mt-3">Supabase (database and authentication), Vercel (hosting and anonymous web analytics), and your browser vendor&apos;s push service for notifications.</p>
 
         <p className="mt-10 text-sm text-muted">
-          Questions? Contact the DOGDZI team. <Link href="/" className="underline">Back to home</Link>
+          Questions? Contact the DOGDZI team. See also our{" "}
+          <Link href="/terms" className="underline">
+            Terms of Service
+          </Link>
+          . <Link href="/" className="underline">Back to home</Link>
         </p>
       </main>
     </div>

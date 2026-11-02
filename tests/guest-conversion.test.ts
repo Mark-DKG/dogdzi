@@ -84,3 +84,18 @@ test("guest limits apply only to guests", () => {
   assert.equal(checkCapability("guest", s, "create_goal").ok, false);
   assert.equal(checkCapability("guest", s, "add_milestone", { goalId: s.goals[0].id }).ok, false);
 });
+
+test("terms acceptance is recorded and carried into a new account", async () => {
+  const { updatePreferences } = await import("../src/lib/domain/actions");
+  const { TERMS_VERSION, hasAcceptedCurrentTerms } = await import("../src/lib/legal/terms");
+  const ctx = makeCtx("2026-11-02T08:00:00Z");
+  let guest = snap();
+  assert.equal(hasAcceptedCurrentTerms(guest.preferences.termsVersion), false, "new users must accept");
+  guest = run(guest, (x) => updatePreferences(x, { termsVersion: TERMS_VERSION, termsAcceptedAt: ctx.now.toISOString() }, ctx));
+  guest = run(guest, (x) => createAction(x, { title: "Plan week", startDate: "2026-11-02" }, ctx));
+  const account = applyPatch(snap(), { upsert: {}, append: {}, preferences: { onboardingCompleted: true } });
+  const merged = applyPatch(account, planGuestMigration(guest, account).patch);
+  assert.ok(hasAcceptedCurrentTerms(merged.preferences.termsVersion));
+  assert.equal(merged.preferences.termsAcceptedAt, "2026-11-02T08:00:00.000Z");
+  assert.equal(hasAcceptedCurrentTerms("2020-01-01"), false, "an old version must be re-accepted");
+});

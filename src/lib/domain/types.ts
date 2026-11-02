@@ -208,6 +208,9 @@ export interface Preferences {
   quietEnd: HHMM;
   maxNotificationsPerDay: number;
   pushEnabled: boolean;
+  /** Version of the Terms of Service accepted, and when. */
+  termsVersion: string | null;
+  termsAcceptedAt: Timestamp | null;
   updatedAt: Timestamp;
 }
 

@@ -15,6 +15,7 @@ import { useData } from "./data-provider";
 import { UpgradeDialog } from "./gate";
 import { ReminderEngine } from "./reminder-engine";
 import { SessionTracker } from "./session-tracker";
+import { TermsGate } from "./terms-gate";
 import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
@@ -36,6 +37,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <ComposerProvider>
       <Shell>{children}</Shell>
       <UpgradeDialog />
+      <TermsGate />
       <ReminderEngine />
     </ComposerProvider>
   );

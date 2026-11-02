@@ -10,6 +10,7 @@ import { LIFE_AREAS, REMINDER_STYLES, type LifeArea, type ReminderStyle } from "
 import { trackEvent } from "@/lib/analytics/client";
 import { notificationsSupported, requestNotificationPermission } from "@/lib/push/client";
 import { useData } from "@/components/app/data-provider";
+import { acceptTermsChanges, TermsCheckbox } from "@/components/app/terms-gate";
 import { Lockup, Tagline } from "@/components/brand/logo";
 import { IconArrowRight, IconBell, IconCheck } from "@/components/icons";
 import { Button, LinkButton } from "@/components/ui/button";
@@ -56,6 +57,8 @@ function Onboarding() {
   const [date, setDate] = useState(today);
   const [time, setTime] = useState("");
   const [titleError, setTitleError] = useState<string | null>(null);
+  const [agreed, setAgreed] = useState(false);
+  const [termsError, setTermsError] = useState(false);
 
   useEffect(() => {
     setPerm(notificationsSupported() ? Notification.permission : "unsupported");
@@ -79,7 +82,12 @@ function Onboarding() {
     );
 
   const finish = async (to: string) => {
-    await run((s, ctx) => updatePreferences(s, { onboardingCompleted: true }, ctx));
+    if (!agreed) {
+      setTermsError(true);
+      return;
+    }
+    const ok = await run((s, ctx) => updatePreferences(s, { onboardingCompleted: true, ...acceptTermsChanges(ctx.now.toISOString()) }, ctx));
+    if (!ok) return;
     trackEvent("onboarding_completed", { mode, style });
     router.push(to);
   };
@@ -111,9 +119,11 @@ function Onboarding() {
               <span key={i} className={cn("h-1.5 rounded-full transition-all", i <= step ? "w-6 bg-cream-200" : "w-3 bg-forest-700")} />
             ))}
           </div>
-          <button type="button" onClick={() => void finish("/app")} className="text-sm font-semibold text-forest-100 hover:text-cream-100">
-            Skip for now
-          </button>
+          {step < STEPS - 1 && (
+            <button type="button" onClick={() => setStep(STEPS - 1)} className="text-sm font-semibold text-forest-100 hover:text-cream-100">
+              Skip for now
+            </button>
+          )}
         </div>
         {step === 0 && (
           <div className="mx-auto mt-10 max-w-lg text-center">
@@ -227,6 +237,23 @@ function Onboarding() {
               </>
             )}
           </>
+        )}
+
+        {step === 4 && (
+          <div className="mt-8">
+            <TermsCheckbox
+              checked={agreed}
+              onChange={(v) => {
+                setAgreed(v);
+                if (v) setTermsError(false);
+              }}
+            />
+            {termsError && (
+              <p role="alert" className="mt-2 text-sm font-medium text-missed">
+                Please accept the Terms of Service to continue.
+              </p>
+            )}
+          </div>
         )}
 
         <div className="mt-10 flex flex-col gap-2">
