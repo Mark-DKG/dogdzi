@@ -237,7 +237,7 @@ function Settings() {
       </Section>
 
       <p className="mt-6 text-center text-xs text-muted">
-        DOGDZI · Get it done · By 9DEVs ·{" "}
+        By 9DEVs ·{" "}
         <Link href="/privacy" className="underline">
           Privacy
         </Link>

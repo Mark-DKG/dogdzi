@@ -6,7 +6,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { reviewQueue } from "@/lib/domain/actions";
 import { GUEST_LIMITS } from "@/lib/domain/limits";
 import { getBrowserSupabase } from "@/lib/supabase/client";
-import { Monogram, Tagline } from "@/components/brand/logo";
+import { Monogram } from "@/components/brand/logo";
 import { IconCalendar, IconChart, IconCloudOff, IconFlag, IconHistory, IconLogout, IconPlus, IconReview, IconSettings, IconToday, IconUser } from "@/components/icons";
 import { Button, LinkButton } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -56,7 +56,6 @@ function Shell({ children }: { children: ReactNode }) {
           <Link href="/app" aria-label="DOGDZI home" className="inline-block">
             <Monogram height={30} tile={false} />
           </Link>
-          <Tagline className="mt-3 text-[10px] text-forest-200" />
         </div>
         <div className="px-4 pb-4">
           <Button variant="brand" className="w-full" onClick={() => composer.newAction()}>

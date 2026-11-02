@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Lockup, Monogram, Tagline } from "@/components/brand/logo";
+import { Lockup, Monogram } from "@/components/brand/logo";
 import { IconCheck, IconCloudOff, IconLifebuoy, IconLock, IconRepeat, IconReview, IconShield } from "@/components/icons";
 import { LinkButton } from "@/components/ui/button";
 import { GUEST_LIMITS } from "@/lib/domain/limits";
@@ -37,9 +37,8 @@ export default function Landing() {
         </div>
 
         <section id="main" className="mx-auto flex max-w-6xl flex-col items-center px-5 pb-20 pt-12 text-center sm:pt-16">
-          <h1 className="sr-only">DOGDZI. Get it done.</h1>
+          <h1 className="sr-only">DOGDZI</h1>
           <Lockup width={420} priority className="w-64 sm:w-96" />
-          <Tagline className="mt-6 text-cream-200" />
           <p className="mt-8 max-w-xl text-lg text-forest-100">
             Plan your actions, follow through, account for what slipped, and recover. A calm, honest system for everyday life.
           </p>
@@ -166,7 +165,7 @@ export default function Landing() {
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-5 py-10 text-center sm:flex-row sm:justify-between sm:text-left">
           <div className="flex items-center gap-4">
             <Monogram height={20} tile={false} />
-            <Tagline className="text-[10px] text-forest-200" />
+            <p className="text-xs font-medium text-forest-200">By 9DEVs</p>
           </div>
           <nav className="flex gap-4 text-sm text-forest-100">
             <Link href="/privacy" className="hover:text-cream-100">
