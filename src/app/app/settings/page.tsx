@@ -11,6 +11,7 @@ import { analyticsAllowed, writeConsent } from "@/lib/analytics/client";
 import { notificationsSupported, pushConfigured, requestNotificationPermission, subscribeToPush, unsubscribeFromPush } from "@/lib/push/client";
 import { GUEST_KEY } from "@/lib/store/local-repo";
 import { useData } from "@/components/app/data-provider";
+import { ThemeChooser } from "@/components/app/theme-toggle";
 import { DataGate } from "@/components/app/gate";
 import { IconChart, IconHistory, IconLogout } from "@/components/icons";
 import { Button, LinkButton } from "@/components/ui/button";
@@ -113,6 +114,10 @@ function Settings() {
             )}
           </div>
         )}
+      </Section>
+
+      <Section title="Appearance" description="Saved on this device.">
+        <ThemeChooser />
       </Section>
 
       <Section title="Life areas" description="Choose the parts of life you want to organise. Each becomes a category.">

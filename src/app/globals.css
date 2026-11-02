@@ -47,29 +47,52 @@
 }
 
 :root {
-  --bg: #fbf6ec;
-  --surface: #fffdf8;
-  --surface-2: #f4ecdb;
-  --border: #e4d9c3;
+  /* Light mode: honeydew background, white cards, soft green lines. */
+  --bg: #f0fff0;
+  --surface: #ffffff;
+  --surface-2: #e2f2e2;
+  --border: #cfe3cf;
   --fg: #1b2f25;
-  --muted: #56665b;
+  --muted: #4f6155;
   --primary: #254032;
   --primary-fg: #f8e7c3;
   --primary-hover: #2f5240;
   --ring: #4c7d63;
   --done: #2f6b4c;
-  --done-bg: #e3eee5;
+  --done-bg: #dcefdf;
   --missed: #9a4a26;
-  --missed-bg: #f6e4d9;
-  --warn: #8a6a1f;
-  --warn-bg: #f7ecd2;
-  --skeleton-a: #efe6d3;
-  --skeleton-b: #f7f0e2;
+  --missed-bg: #f8e4d9;
+  --warn: #7d5f18;
+  --warn-bg: #f6edd2;
+  --skeleton-a: #dfeedf;
+  --skeleton-b: #ecf8ec;
   color-scheme: light;
 }
 
+/* Dark mode: chosen in the app (data-theme="dark"), or by the system when no choice is stored. */
+:root[data-theme="dark"] {
+  --bg: #14231b;
+  --surface: #1c3026;
+  --surface-2: #233a2e;
+  --border: #2f4a3b;
+  --fg: #f4e8cf;
+  --muted: #b3bfb1;
+  --primary: #f8e7c3;
+  --primary-fg: #1e3529;
+  --primary-hover: #efd8a8;
+  --ring: #a9c4b2;
+  --done: #9ccba9;
+  --done-bg: #20402f;
+  --missed: #e39a72;
+  --missed-bg: #3d2a1f;
+  --warn: #e2c587;
+  --warn-bg: #3a3320;
+  --skeleton-a: #22392d;
+  --skeleton-b: #2a4436;
+  color-scheme: dark;
+}
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --bg: #14231b;
     --surface: #1c3026;
     --surface-2: #233a2e;
@@ -91,6 +114,9 @@
     color-scheme: dark;
   }
 }
+
+/* Tailwind's dark: variant follows the in-app choice. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme inline {
   --color-bg: var(--bg);

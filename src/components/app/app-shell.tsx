@@ -15,6 +15,7 @@ import { useData } from "./data-provider";
 import { UpgradeDialog } from "./gate";
 import { ReminderEngine } from "./reminder-engine";
 import { SessionTracker } from "./session-tracker";
+import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
   { href: "/app", label: "Today", icon: IconToday, mobile: true },
@@ -81,6 +82,7 @@ function Shell({ children }: { children: ReactNode }) {
               </Link>
             );
           })}
+          <ThemeToggle variant="menu" />
         </nav>
         <div className="border-t border-forest-700 p-4">
           {mode === "account" && user ? (
@@ -114,6 +116,7 @@ function Shell({ children }: { children: ReactNode }) {
           <Monogram height={22} tile={false} />
         </Link>
         <div className="flex items-center gap-1">
+          <ThemeToggle variant="bar" />
           <Link href="/app/history" className="rounded-lg p-2 text-forest-100" aria-label="History">
             <IconHistory size={20} />
           </Link>
