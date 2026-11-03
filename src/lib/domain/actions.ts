@@ -134,7 +134,7 @@ export function validateActionInput(input: Partial<ActionInput>, partial = false
   if (input.durationMin != null && (input.durationMin < 1 || input.durationMin > 24 * 60)) throw new DomainError("invalid", "Duration must be between 1 minute and 24 hours.");
   if (input.recurrence) {
     const r = input.recurrence;
-    if (!["daily", "weekly", "monthly"].includes(r.freq)) throw new DomainError("invalid", "Unsupported repeat rule.");
+    if (!["daily", "weekly", "monthly", "yearly"].includes(r.freq)) throw new DomainError("invalid", "Unsupported repeat rule.");
     if (!Number.isInteger(r.interval) || r.interval < 1 || r.interval > 52) throw new DomainError("invalid", "Repeat interval must be between 1 and 52.");
     if (r.byWeekday && r.byWeekday.some((d) => d < 0 || d > 6)) throw new DomainError("invalid", "Invalid weekday.");
     if (r.freq === "weekly" && r.byWeekday && r.byWeekday.length === 0) throw new DomainError("invalid", "Pick at least one day of the week.");
@@ -463,6 +463,33 @@ export function acknowledgeMany(s: Snapshot, occurrenceIds: UUID[], reasonCode: 
     cur = applyLocal(cur, p);
   }
   return mergePatches(...parts);
+}
+
+/**
+ * Make sure a repeating plan has a real occurrence on `date` (for dates
+ * beyond the scheduling window, where the calendar only projects them). Uses
+ * the same deterministic id as the scheduler, so it can't create a duplicate.
+ */
+export function ensureOccurrence(s: Snapshot, actionId: UUID, date: ISODate, ctx: Ctx): { patch: Patch; occurrenceId: UUID } {
+  const a = findAction(s, actionId);
+  if (a.status !== "active") throw new DomainError("invalid_state", "This plan was cancelled.");
+  if (!a.recurrence) {
+    const o = s.occurrences.find((x) => x.actionId === actionId && x.date === date && x.status === "pending");
+    if (!o) throw new DomainError("not_found", "Nothing is planned on that date.");
+    return { patch: emptyPatch(), occurrenceId: o.id };
+  }
+  const occ = newOccurrence(ctx, a, date, a.time, "recurrence");
+  if (s.occurrences.some((o) => o.id === occ.id)) return { patch: emptyPatch(), occurrenceId: occ.id };
+  if (date < today(ctx)) throw new DomainError("invalid", "That date has passed.");
+  if (!expandRecurrence(a.recurrence, a.startDate, date, date).includes(date)) throw new DomainError("invalid", "This plan doesn't repeat on that date.");
+  return { patch: { upsert: { occurrences: [occ] }, append: {} }, occurrenceId: occ.id };
+}
+
+/** Move one date of a plan (including a projected repeat) to another day and time. History keeps the original. */
+export function rescheduleOn(s: Snapshot, actionId: UUID, date: ISODate, to: ISODate, time: HHMM | null, ctx: Ctx): Patch {
+  const { patch, occurrenceId } = ensureOccurrence(s, actionId, date, ctx);
+  const after = applyLocal(s, patch);
+  return mergePatches(patch, rescheduleOccurrence(after, occurrenceId, to, time, ctx));
 }
 
 /* ─────────────────────────── Maintenance ─────────────────────────── */

@@ -1,6 +1,6 @@
 "use client";
 
-import { addDays, formatDateLabel, formatTime } from "@/lib/domain/dates";
+import { addDays, formatDateLabel, formatTimeRange } from "@/lib/domain/dates";
 import { routineStreak } from "@/lib/domain/insights";
 import { describeRecurrence } from "@/lib/domain/recurrence";
 import { ActionList, sortByTime } from "@/components/app/action-item";
@@ -8,7 +8,7 @@ import { useComposer } from "@/components/app/composer";
 import { useData } from "@/components/app/data-provider";
 import { DataGate } from "@/components/app/gate";
 import { IconCalendar, IconEdit, IconPlus, IconRepeat } from "@/components/icons";
-import { Button } from "@/components/ui/button";
+import { Button, LinkButton } from "@/components/ui/button";
 import { ActionListSkeleton, PageHeaderSkeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/states";
 import { Badge, PageHeader, SectionTitle } from "@/components/ui/surface";
@@ -45,9 +45,14 @@ function Upcoming() {
         title="Upcoming"
         subtitle="The next two weeks, plus your routines."
         actions={
-          <Button size="sm" variant="secondary" onClick={() => composer.newAction({ date: addDays(today, 1) })}>
-            <IconPlus size={16} /> Plan ahead
-          </Button>
+          <div className="flex gap-2">
+            <LinkButton size="sm" variant="secondary" href={`/app/calendar?date=${today}`}>
+              <IconCalendar size={16} /> Calendar
+            </LinkButton>
+            <Button size="sm" variant="secondary" onClick={() => composer.newAction({ date: addDays(today, 1), plan: true })}>
+              <IconPlus size={16} /> Plan ahead
+            </Button>
+          </div>
         }
       />
 
@@ -67,7 +72,7 @@ function Upcoming() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold">{a.title}</p>
                     <p className="text-xs text-muted">
-                      {describeRecurrence(a.recurrence)} · {formatTime(a.time)}
+                      {describeRecurrence(a.recurrence)} · {formatTimeRange(a.time, a.durationMin)}
                     </p>
                   </div>
                   {streak > 0 && <Badge tone="done">{streak}-day streak</Badge>}

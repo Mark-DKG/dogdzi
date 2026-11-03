@@ -155,3 +155,35 @@ export function formatTime(time: HHMM | null): string {
   const h12 = h % 12 === 0 ? 12 : h % 12;
   return `${h12}:${pad(m)}${suffix}`;
 }
+
+/** `time` plus `minutes`, or null when it would pass midnight. */
+export function addMinutesHHMM(time: HHMM, minutes: number): HHMM | null {
+  const t = minutesOfDay(time) + minutes;
+  if (t < 0 || t >= 24 * 60) return null;
+  return `${pad(Math.floor(t / 60))}:${pad(t % 60)}`;
+}
+
+/** "9:00am", or "9:00–10:30am" style range when a duration is known. */
+export function formatTimeRange(time: HHMM | null, durationMin: number | null | undefined): string {
+  if (!time) return formatTime(null);
+  const end = durationMin ? addMinutesHHMM(time, durationMin) : null;
+  return end ? `${formatTime(time)}–${formatTime(end)}` : formatTime(time);
+}
+
+export function addMonths(date: ISODate, n: number): ISODate {
+  const { y, m, d } = parseISODate(date);
+  const total = y * 12 + (m - 1) + n;
+  const ny = Math.floor(total / 12);
+  const nm = (total % 12) + 1;
+  return `${ny}-${pad(nm)}-${pad(Math.min(d, daysInMonth(ny, nm)))}`;
+}
+
+export function formatLongDate(date: ISODate): string {
+  const { y, m, d } = parseISODate(date);
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+}
+
+export function formatMonthYear(date: ISODate): string {
+  const { y, m } = parseISODate(date);
+  return new Date(Date.UTC(y, m - 1, 1)).toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+}

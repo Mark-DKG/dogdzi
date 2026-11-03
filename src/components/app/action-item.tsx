@@ -2,7 +2,7 @@
 
 import { cancelAction, completeOccurrence, reopenOccurrence } from "@/lib/domain/actions";
 import { RESOLUTION_LABELS, STATUS_LABELS } from "@/lib/domain/copy";
-import { formatDateLabel, formatTime } from "@/lib/domain/dates";
+import { formatDateLabel, formatTimeRange } from "@/lib/domain/dates";
 import type { Occurrence } from "@/lib/domain/types";
 import { IconCheck, IconEdit, IconMove, IconRepeat, IconSkip, IconTrash, IconTarget } from "@/components/icons";
 import { useState } from "react";
@@ -39,8 +39,7 @@ export function ActionItem({ occurrence, showDate = false }: { occurrence: Occur
 
   const meta: string[] = [];
   if (showDate) meta.push(formatDateLabel(o.date, today));
-  meta.push(formatTime(o.time));
-  if (action.durationMin) meta.push(`${action.durationMin} min`);
+  meta.push(formatTimeRange(o.time, action.durationMin));
 
   return (
     <li

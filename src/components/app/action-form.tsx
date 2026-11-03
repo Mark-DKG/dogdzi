@@ -1,13 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { createAction, updateAction, type ActionInput } from "@/lib/domain/actions";
-import { weekday } from "@/lib/domain/dates";
+import { cancelAction, createAction, updateAction, type ActionInput } from "@/lib/domain/actions";
+import { addMinutesHHMM, minutesOfDay, weekday } from "@/lib/domain/dates";
 import { describeRecurrence } from "@/lib/domain/recurrence";
 import type { Priority, Recurrence } from "@/lib/domain/types";
 import { IconLock } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog, Dialog } from "@/components/ui/dialog";
 import { ChoiceChips, Field, Input, Select, Switch, Textarea, ToggleChips } from "@/components/ui/field";
 import { useData } from "./data-provider";
 
@@ -16,9 +16,11 @@ export interface ActionFormPreset {
   goalId?: string;
   milestoneId?: string;
   repeat?: RepeatChoice;
+  /** Calendar wording: "Add plan" instead of "New action". */
+  plan?: boolean;
 }
 
-type RepeatChoice = "none" | "daily" | "weekdays" | "weekly" | "monthly";
+type RepeatChoice = "none" | "daily" | "weekdays" | "weekly" | "monthly" | "yearly";
 const WEEKDAYS = [
   { value: "1", label: "Mon" },
   { value: "2", label: "Tue" },
@@ -42,6 +44,7 @@ function toRepeat(r: Recurrence | null): RepeatChoice {
   if (!r) return "none";
   if (r.freq === "daily") return "daily";
   if (r.freq === "monthly") return "monthly";
+  if (r.freq === "yearly") return "yearly";
   const d = r.byWeekday ?? [];
   if (d.length === 5 && [1, 2, 3, 4, 5].every((x) => d.includes(x))) return "weekdays";
   return "weekly";
@@ -65,7 +68,9 @@ export function ActionForm({ open, onClose, editId, preset }: { open: boolean; o
   const [notes, setNotes] = useState(existing?.notes ?? "");
   const [goalId, setGoalId] = useState(existing?.goalId ?? preset?.goalId ?? "");
   const [milestoneId, setMilestoneId] = useState(existing?.milestoneId ?? preset?.milestoneId ?? "");
-  const [duration, setDuration] = useState(existing?.durationMin ? String(existing.durationMin) : "");
+  const [endTime, setEndTime] = useState(existing?.time && existing.durationMin ? (addMinutesHHMM(existing.time, existing.durationMin) ?? "") : "");
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const plan = preset?.plan ?? false;
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
@@ -87,6 +92,8 @@ export function ActionForm({ open, onClose, editId, preset }: { open: boolean; o
         return { freq: "weekly", interval, byWeekday: days.map(Number), until: until || null };
       case "monthly":
         return { freq: "monthly", interval, until: until || null };
+      case "yearly":
+        return { freq: "yearly", interval, until: until || null };
     }
   })();
 
@@ -95,8 +102,11 @@ export function ActionForm({ open, onClose, editId, preset }: { open: boolean; o
     const errs: Record<string, string> = {};
     if (!title.trim()) errs.title = "Give the action a short title.";
     if (!date) errs.date = "Choose a date.";
+    else if (!existing && date < today) errs.date = "Plans start today or later.";
     if (repeat === "weekly" && days.length === 0) errs.days = "Pick at least one day.";
-    if (duration && (Number(duration) < 1 || Number(duration) > 1440)) errs.duration = "Between 1 and 1440 minutes.";
+    if (until && date && until < date) errs.until = "The end date is before the start.";
+    if (endTime && !time) errs.endTime = "Add a start time first.";
+    else if (endTime && time && minutesOfDay(endTime) <= minutesOfDay(time)) errs.endTime = "End after the start time.";
     setErrors(errs);
     if (Object.keys(errs).length) return;
     if (recurrence && !existing && !allow("recurrence")) return;
@@ -108,7 +118,7 @@ export function ActionForm({ open, onClose, editId, preset }: { open: boolean; o
       priority,
       startDate: date,
       time: time || null,
-      durationMin: duration ? Number(duration) : null,
+      durationMin: time && endTime ? minutesOfDay(endTime) - minutesOfDay(time) : time ? null : (existing?.durationMin ?? null),
       recurrence,
       remindersEnabled,
       reminderOffsets: reminder === "style" ? [] : [Number(reminder)],
@@ -118,7 +128,7 @@ export function ActionForm({ open, onClose, editId, preset }: { open: boolean; o
     setSaving(true);
     const ok = existing
       ? await run((s, ctx) => updateAction(s, existing.id, existing.recurrence ? input : { ...input, recurrence: undefined }, ctx), { success: "Saved" })
-      : await run((s, ctx) => createAction(s, input, ctx), { capability: "create_action", success: recurrence ? "Routine added" : "Action added" });
+      : await run((s, ctx) => createAction(s, input, ctx), { capability: "create_action", success: plan ? (recurrence ? "Repeating plan added" : "Plan added") : recurrence ? "Routine added" : "Action added" });
     setSaving(false);
     if (ok) onClose();
   };
@@ -127,15 +137,20 @@ export function ActionForm({ open, onClose, editId, preset }: { open: boolean; o
     <Dialog
       open={open}
       onClose={onClose}
-      title={existing ? "Edit action" : "New action"}
+      title={existing ? (plan ? "Edit plan" : "Edit action") : plan ? "Add plan" : "New action"}
       description={existing ? undefined : "What will you do, and when?"}
       footer={
         <>
+          {existing && existing.status === "active" && (
+            <Button variant="ghost" className="mr-auto text-missed" onClick={() => setConfirmDelete(true)}>
+              {existing.recurrence ? "Stop repeating" : "Delete"}
+            </Button>
+          )}
           <Button variant="ghost" onClick={onClose}>
             Cancel
           </Button>
           <Button type="submit" form="action-form" loading={saving}>
-            {existing ? "Save changes" : "Add action"}
+            {existing ? "Save changes" : plan ? "Add plan" : "Add action"}
           </Button>
         </>
       }
@@ -147,14 +162,20 @@ export function ActionForm({ open, onClose, editId, preset }: { open: boolean; o
           )}
         </Field>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <Field label={repeat === "none" ? "Date" : "Starts"} error={errors.date}>
             {({ id, describedBy, invalid }) => <Input id={id} type="date" aria-describedby={describedBy} aria-invalid={invalid} value={date} min={existing ? undefined : today} onChange={(e) => setDate(e.target.value)} required />}
           </Field>
-          <Field label="Time" optional hint="Leave empty for any time that day">
-            {({ id, describedBy }) => <Input id={id} type="time" aria-describedby={describedBy} value={time} onChange={(e) => setTime(e.target.value)} />}
-          </Field>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="Start" optional>
+              {({ id }) => <Input id={id} type="time" value={time} onChange={(e) => setTime(e.target.value)} />}
+            </Field>
+            <Field label="End" optional error={errors.endTime}>
+              {({ id, describedBy, invalid }) => <Input id={id} type="time" aria-describedby={describedBy} aria-invalid={invalid} value={endTime} disabled={!time} onChange={(e) => setEndTime(e.target.value)} />}
+            </Field>
+          </div>
         </div>
+        {!time && <p className="-mt-3 text-xs text-muted">No time means any time that day.</p>}
 
         <div className="space-y-3 rounded-2xl border border-line p-4">
           <Field
@@ -176,10 +197,7 @@ export function ActionForm({ open, onClose, editId, preset }: { open: boolean; o
                   disabled={typeLocked && !existing?.recurrence}
                   onChange={(e) => {
                     const v = e.target.value as RepeatChoice;
-                    if (v !== "none" && recurringLocked) {
-                      allow("recurrence");
-                      return;
-                    }
+                    if (v !== "none" && recurringLocked && !allow("recurrence")) return;
                     if (typeLocked && v === "none") return;
                     setRepeat(v);
                   }}
@@ -189,6 +207,7 @@ export function ActionForm({ open, onClose, editId, preset }: { open: boolean; o
                   <option value="weekdays">Weekdays</option>
                   <option value="weekly">Specific days of the week</option>
                   <option value="monthly">Monthly</option>
+                  <option value="yearly">Every year</option>
                 </Select>
                 {recurringLocked && <IconLock className="shrink-0 text-muted" aria-label="Requires account" />}
               </div>
@@ -202,17 +221,17 @@ export function ActionForm({ open, onClose, editId, preset }: { open: boolean; o
           )}
           {repeat !== "none" && repeat !== "weekdays" && (
             <div className="grid grid-cols-2 gap-3">
-              <Field label={`Every (${repeat === "daily" ? "days" : repeat === "weekly" ? "weeks" : "months"})`}>
+              <Field label={`Every (${repeat === "daily" ? "days" : repeat === "weekly" ? "weeks" : repeat === "yearly" ? "years" : "months"})`}>
                 {({ id }) => <Input id={id} type="number" min={1} max={52} value={interval} onChange={(e) => setIntervalN(Math.max(1, Math.min(52, Number(e.target.value) || 1)))} />}
               </Field>
-              <Field label="Until" optional>
-                {({ id }) => <Input id={id} type="date" value={until} min={date} onChange={(e) => setUntil(e.target.value)} />}
+              <Field label="Ends on" optional error={errors.until}>
+                {({ id, invalid }) => <Input id={id} type="date" aria-invalid={invalid} value={until} min={date} onChange={(e) => setUntil(e.target.value)} />}
               </Field>
             </div>
           )}
           {repeat === "weekdays" && (
-            <Field label="Until" optional>
-              {({ id }) => <Input id={id} type="date" value={until} min={date} onChange={(e) => setUntil(e.target.value)} />}
+            <Field label="Ends on" optional error={errors.until}>
+              {({ id, invalid }) => <Input id={id} type="date" aria-invalid={invalid} value={until} min={date} onChange={(e) => setUntil(e.target.value)} />}
             </Field>
           )}
         </div>
@@ -256,9 +275,9 @@ export function ActionForm({ open, onClose, editId, preset }: { open: boolean; o
           ]}
         />
 
-        <details className="group rounded-2xl border border-line p-4" open={!!(goalId || notes || duration)}>
+        <details className="group rounded-2xl border border-line p-4" open={!!(goalId || notes)}>
           <summary className="cursor-pointer list-none text-sm font-semibold text-fg">
-            More options <span className="font-normal text-muted">· goal, duration, notes</span>
+            More options <span className="font-normal text-muted">· details, goal</span>
           </summary>
           <div className="mt-4 space-y-4">
             {goals.length > 0 && (
@@ -298,15 +317,29 @@ export function ActionForm({ open, onClose, editId, preset }: { open: boolean; o
                 )}
               </div>
             )}
-            <Field label="Duration (minutes)" optional error={errors.duration}>
-              {({ id, invalid }) => <Input id={id} type="number" inputMode="numeric" min={1} max={1440} aria-invalid={invalid} value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="30" />}
-            </Field>
-            <Field label="Notes" optional hint="Private to you. Never sent to analytics.">
+            <Field label="Details" optional hint="Private to you. Never sent to analytics.">
               {({ id, describedBy }) => <Textarea id={id} aria-describedby={describedBy} value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={2000} />}
             </Field>
           </div>
         </details>
       </form>
+      {existing && (
+        <ConfirmDialog
+          open={confirmDelete}
+          onClose={() => setConfirmDelete(false)}
+          title={existing.recurrence ? "Stop this repeating plan?" : "Delete this plan?"}
+          body={
+            existing.recurrence
+              ? "Future dates are removed from your calendar. Everything that already happened stays in your history."
+              : "It's removed from your calendar. History keeps a note that it was cancelled."
+          }
+          confirmLabel={existing.recurrence ? "Stop repeating" : "Delete plan"}
+          tone="danger"
+          onConfirm={() => {
+            void run((s, ctx) => cancelAction(s, existing.id, ctx), { success: "Removed. It's still in your history." }).then((ok) => ok && onClose());
+          }}
+        />
+      )}
     </Dialog>
   );
 }

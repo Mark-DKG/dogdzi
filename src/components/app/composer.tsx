@@ -10,7 +10,7 @@ type Review = { occurrence: Occurrence; trigger: "missed" | "skipped" };
 
 interface ComposerApi {
   newAction(preset?: ActionFormPreset): void;
-  editAction(actionId: string): void;
+  editAction(actionId: string, preset?: ActionFormPreset): void;
   review(occurrence: Occurrence, trigger: "missed" | "skipped"): void;
   reschedule(occurrence: Occurrence): void;
 }
@@ -25,7 +25,7 @@ export function ComposerProvider({ children }: { children: ReactNode }) {
   const [move, setMove] = useState<Occurrence | null>(null);
 
   const newAction = useCallback((preset?: ActionFormPreset) => setForm((f) => ({ open: true, preset, key: f.key + 1 })), []);
-  const editAction = useCallback((editId: string) => setForm((f) => ({ open: true, editId, key: f.key + 1 })), []);
+  const editAction = useCallback((editId: string, preset?: ActionFormPreset) => setForm((f) => ({ open: true, editId, preset, key: f.key + 1 })), []);
   const api = useMemo<ComposerApi>(
     () => ({ newAction, editAction, review: (occurrence, trigger) => setReview({ occurrence, trigger }), reschedule: setMove }),
     [newAction, editAction],

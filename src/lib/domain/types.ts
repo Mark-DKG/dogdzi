@@ -39,10 +39,10 @@ export interface Category {
   updatedAt: Timestamp;
 }
 
-export type RecurrenceFreq = "daily" | "weekly" | "monthly";
+export type RecurrenceFreq = "daily" | "weekly" | "monthly" | "yearly";
 export interface Recurrence {
   freq: RecurrenceFreq;
-  /** Every N days / weeks / months. */
+  /** Every N days / weeks / months / years. */
   interval: number;
   /** Weekly only: 0 = Sunday … 6 = Saturday. */
   byWeekday?: number[];

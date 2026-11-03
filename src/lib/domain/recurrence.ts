@@ -35,8 +35,20 @@ export function expandRecurrence(rule: Recurrence, start: ISODate, from: ISODate
     return out;
   }
 
-  // monthly: same day-of-month as start, clamped to month length (31st → 30th/28th).
   const s = parseISODate(start);
+  if (rule.freq === "yearly") {
+    // Same month and day each N years; 29 February falls on the 28th in other years.
+    for (let k = 0; ; k++) {
+      const y = s.y + k * interval;
+      const d = Math.min(s.d, daysInMonth(y, s.m));
+      const iso = `${y}-${String(s.m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      if (iso > end || out.length >= MAX_DATES) break;
+      if (iso >= lo) out.push(iso);
+    }
+    return out;
+  }
+
+  // monthly: same day-of-month as start, clamped to month length (31st → 30th/28th).
   let monthIndex = 0;
   for (;;) {
     const total = s.m - 1 + monthIndex * interval;
@@ -67,5 +79,7 @@ export function describeRecurrence(rule: Recurrence | null): string {
     }
     case "monthly":
       return n ? `Every ${n} months` : "Monthly";
+    case "yearly":
+      return n ? `Every ${n} years` : "Every year";
   }
 }

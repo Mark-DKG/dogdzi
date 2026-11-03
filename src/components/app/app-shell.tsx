@@ -7,7 +7,7 @@ import { reviewQueue } from "@/lib/domain/actions";
 import { GUEST_LIMITS } from "@/lib/domain/limits";
 import { getBrowserSupabase } from "@/lib/supabase/client";
 import { Monogram } from "@/components/brand/logo";
-import { IconCalendar, IconChart, IconCloudOff, IconFlag, IconHistory, IconLogout, IconPlus, IconReview, IconSettings, IconToday, IconUser } from "@/components/icons";
+import { IconCalendar, IconChart, IconCloudOff, IconFlag, IconHistory, IconLogout, IconPlus, IconReview, IconSettings, IconToday, IconUser, IconUpcoming } from "@/components/icons";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Menu } from "@/components/ui/menu";
 import { cn } from "@/lib/utils";
@@ -23,7 +23,8 @@ import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
   { href: "/app", label: "Today", icon: IconToday, mobile: true },
-  { href: "/app/upcoming", label: "Upcoming", icon: IconCalendar, mobile: true },
+  { href: "/app/upcoming", label: "Upcoming", icon: IconUpcoming, mobile: true },
+  { href: "/app/calendar", label: "Calendar", icon: IconCalendar, mobile: true },
   { href: "/app/goals", label: "Goals", icon: IconFlag, mobile: true },
   { href: "/app/review", label: "Review", icon: IconReview, mobile: true },
   { href: "/app/history", label: "History", icon: IconHistory, mobile: false },
@@ -142,7 +143,7 @@ function Shell({ children }: { children: ReactNode }) {
 
       <Banners guest={mode === "guest" && status === "ready"} persistent={persistent} />
 
-      <main id="main" className="mx-auto w-full max-w-3xl px-4 pb-[calc(10rem+env(safe-area-inset-bottom))] pt-6 sm:px-6 lg:pb-16 lg:pt-10">
+      <main id="main" className={cn("mx-auto w-full px-4 pb-[calc(10rem+env(safe-area-inset-bottom))] pt-6 sm:px-6 lg:pb-16 lg:pt-10", path.startsWith("/app/calendar") ? "max-w-6xl" : "max-w-3xl")}>
         {children}
       </main>
 
