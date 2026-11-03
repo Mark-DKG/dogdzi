@@ -19,7 +19,7 @@ export function useInstallMethod(): InstallMethod | null {
 }
 
 /** Share icon as it appears in Safari, so the instruction is easy to follow. */
-function ShareGlyph() {
+export function ShareGlyph() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden className="inline-block -translate-y-0.5">
       <path d="M12 3v12M8 7l4-4 4 4" />

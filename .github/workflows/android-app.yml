@@ -1,0 +1,105 @@
+name: Android app
+
+# Builds the signed DOGDZI Android app (a Trusted Web Activity for
+# https://dogdzi.vercel.app) and publishes it to public/downloads/, where the
+# website's Download page serves it. Signing key: repository secrets
+# DOGDZI_KEYSTORE_B64 and DOGDZI_KEYSTORE_PASSWORD (never committed).
+
+on:
+  push:
+    branches: [main]
+    paths: ["android/**", ".github/workflows/android-app.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-app
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DOGDZI_KEYSTORE_B64: ${{ secrets.DOGDZI_KEYSTORE_B64 }}
+      DOGDZI_KEYSTORE_PASSWORD: ${{ secrets.DOGDZI_KEYSTORE_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.10.2"
+
+      - name: Load signing key
+        run: |
+          touch build.log
+          if [ -z "$DOGDZI_KEYSTORE_B64" ] || [ -z "$DOGDZI_KEYSTORE_PASSWORD" ]; then
+            echo "MISSING_SECRETS: add DOGDZI_KEYSTORE_B64 and DOGDZI_KEYSTORE_PASSWORD under Settings > Secrets and variables > Actions" | tee -a build.log
+            exit 1
+          fi
+          echo "$DOGDZI_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.p12"
+          echo "DOGDZI_KEYSTORE_PATH=$RUNNER_TEMP/release.p12" >> "$GITHUB_ENV"
+
+      - name: Build release APK
+        run: |
+          set -o pipefail
+          export DOGDZI_VERSION_CODE=$((100 + GITHUB_RUN_NUMBER))
+          export DOGDZI_VERSION_NAME="1.0.$GITHUB_RUN_NUMBER"
+          cd android
+          gradle assembleRelease --no-daemon --stacktrace 2>&1 | tee -a ../build.log
+
+      - name: Verify signature matches the website's asset links
+        run: |
+          set -o pipefail
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          APK=android/app/build/outputs/apk/release/app-release.apk
+          "$BT/apksigner" verify --verbose --print-certs "$APK" | tee -a build.log
+          FP=$("$BT/apksigner" verify --print-certs "$APK" | grep -m1 "SHA-256 digest" | awk '{print $NF}')
+          EXPECT=$(python3 -c "import json;print(json.load(open('public/.well-known/assetlinks.json'))[0]['target']['sha256_cert_fingerprints'][0].replace(':','').lower())")
+          echo "cert=$FP expected=$EXPECT" | tee -a build.log
+          [ "$FP" = "$EXPECT" ] || { echo "SIGNING_MISMATCH" | tee -a build.log; exit 1; }
+
+      - name: Publish to the website
+        run: |
+          mkdir -p public/downloads
+          cp android/app/build/outputs/apk/release/app-release.apk public/downloads/dogdzi.apk
+          python3 - <<'PY'
+          import hashlib, json, os, datetime
+          p = "public/downloads/dogdzi.apk"
+          data = open(p, "rb").read()
+          info = {
+              "name": "DOGDZI for Android",
+              "package": "com.ninedevs.dogdzi",
+              "version": "1.0." + os.environ["GITHUB_RUN_NUMBER"],
+              "versionCode": 100 + int(os.environ["GITHUB_RUN_NUMBER"]),
+              "minAndroid": "5.0",
+              "bytes": len(data),
+              "sha256": hashlib.sha256(data).hexdigest(),
+              "builtAt": datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat(),
+              "file": "/downloads/dogdzi.apk",
+          }
+          json.dump(info, open("public/downloads/dogdzi-apk.json", "w"), indent=2)
+          print(info)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/downloads
+          git commit -m "Android app 1.0.${GITHUB_RUN_NUMBER}"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push origin HEAD:main && break; sleep 5; done
+          echo "PUBLISHED 1.0.${GITHUB_RUN_NUMBER}" | tee -a build.log
+
+      - name: Report result on the commit
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          touch build.log
+          { echo "Android build run ${GITHUB_RUN_NUMBER}: ${JOB_STATUS}"; echo; echo '```'; tail -c 55000 build.log; echo '```'; } > report.md
+          gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/comments" -F body=@report.md > /dev/null || true

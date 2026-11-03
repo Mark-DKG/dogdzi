@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.ninedevs.dogdzi",
+      "sha256_cert_fingerprints": ["36:B9:48:F1:80:3E:B5:92:CB:02:BD:2F:16:20:04:C6:10:37:95:EE:DE:D5:31:DC:DB:D2:64:91:45:30:A6:66"]
+    }
+  }
+]

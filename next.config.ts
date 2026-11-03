@@ -23,6 +23,17 @@ const nextConfig: NextConfig = {
         ],
       },
       { source: "/admin/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+      {
+        // Android app download: correct type, saved as DOGDZI.apk, never served stale.
+        source: "/downloads/dogdzi.apk",
+        headers: [
+          { key: "Content-Type", value: "application/vnd.android.package-archive" },
+          { key: "Content-Disposition", value: 'attachment; filename="DOGDZI.apk"' },
+          { key: "Cache-Control", value: "public, max-age=0, must-revalidate" },
+        ],
+      },
+      { source: "/downloads/dogdzi-apk.json", headers: [{ key: "Cache-Control", value: "no-cache" }] },
+      { source: "/.well-known/assetlinks.json", headers: [{ key: "Content-Type", value: "application/json" }] },
     ];
   },
 };

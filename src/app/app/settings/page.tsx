@@ -156,6 +156,9 @@ function Settings() {
 
       <Section title="Install app">
         <InstallCard />
+        <Link href="/download" className="inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4">
+          Android app and other devices
+        </Link>
       </Section>
 
       <Section title="Life areas" description="Choose the parts of life you want to organise. Each becomes a category.">

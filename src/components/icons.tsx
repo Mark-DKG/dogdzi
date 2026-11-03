@@ -59,3 +59,5 @@ export const IconSun = (p: P) => base(p, <><circle cx="12" cy="12" r="4" /><path
 export const IconMoon = (p: P) => base(p, <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />);
 export const IconEye = (p: P) => base(p, <><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></>);
 export const IconEyeOff = (p: P) => base(p, <><path d="M10.6 5.1A10.9 10.9 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-2.6 3.6M6.6 6.6C3.9 8.4 2 12 2 12s3.6 7 10 7a9.8 9.8 0 0 0 5.4-1.6" /><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" /><path d="M3 3l18 18" /></>);
+export const IconDownload = (p: P) => base(p, <><path d="M12 3v12M7 10l5 5 5-5" /><path d="M4 21h16" /></>);
+export const IconMonitor = (p: P) => base(p, <><rect x="2" y="4" width="20" height="13" rx="2" /><path d="M8 21h8M12 17v4" /></>);

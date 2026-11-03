@@ -25,6 +25,9 @@ export default function Landing() {
             <Monogram height={24} tile={false} />
           </Link>
           <nav className="flex items-center gap-2 text-sm font-semibold">
+            <Link href="/download" className="flex min-h-11 items-center rounded-lg px-3 text-forest-100 hover:text-cream-100">
+              Get the app
+            </Link>
             <Link href="/privacy" className="hidden min-h-11 items-center rounded-lg px-3 text-forest-100 hover:text-cream-100 sm:flex">
               Privacy
             </Link>
@@ -173,6 +176,9 @@ export default function Landing() {
             </Link>
             <Link href="/terms" className="hover:text-cream-100">
               Terms
+            </Link>
+            <Link href="/download" className="hover:text-cream-100">
+              Get the app
             </Link>
             <Link href="/app" className="hover:text-cream-100">
               Open app
