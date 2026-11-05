@@ -12,13 +12,13 @@ const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", displa
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: "DOGDZI · Get it done", template: "%s · DOGDZI" },
+  title: { default: "Dogdzi · Get it done", template: "%s · Dogdzi" },
   description: "Plan your actions, follow through, account for what slipped, and recover. Personal execution and accountability by 9DEVs.",
-  applicationName: "DOGDZI",
+  applicationName: "Dogdzi",
   manifest: "/manifest.webmanifest",
   icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
-  appleWebApp: { capable: true, title: "DOGDZI", statusBarStyle: "black-translucent" },
-  openGraph: { title: "DOGDZI · Get it done", description: "Personal execution and accountability.", images: ["/og.png"], type: "website" },
+  appleWebApp: { capable: true, title: "Dogdzi", statusBarStyle: "black-translucent" },
+  openGraph: { title: "Dogdzi · Get it done", description: "Personal execution and accountability.", images: ["/og.png"], type: "website" },
   formatDetection: { telephone: false },
 };
 

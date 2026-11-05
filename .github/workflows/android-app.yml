@@ -1,6 +1,6 @@
 name: Android app
 
-# Builds the signed DOGDZI Android app (a Trusted Web Activity for
+# Builds the signed Dogdzi Android app (a Trusted Web Activity for
 # https://dogdzi.vercel.app) and publishes it to public/downloads/, where the
 # website's Download page serves it. Signing key: repository secrets
 # DOGDZI_KEYSTORE_B64 and DOGDZI_KEYSTORE_PASSWORD (never committed).
@@ -74,7 +74,7 @@ jobs:
           p = "public/downloads/dogdzi.apk"
           data = open(p, "rb").read()
           info = {
-              "name": "DOGDZI for Android",
+              "name": "Dogdzi for Android",
               "package": "com.ninedevs.dogdzi",
               "version": "1.0." + os.environ["GITHUB_RUN_NUMBER"],
               "versionCode": 100 + int(os.environ["GITHUB_RUN_NUMBER"]),

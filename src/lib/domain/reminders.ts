@@ -108,7 +108,7 @@ export function planReminders(o: Occurrence, a: Action, prefs: Preferences): Pla
     if (seen.has(key)) continue;
     seen.add(key);
     const when = o.time ?? "";
-    out.push({ key, occurrenceId: o.id, actionId: a.id, at, kind: r.kind, title: "DOGDZI", body: reminderText(style, r.kind, a.title, formatWhen(when)) });
+    out.push({ key, occurrenceId: o.id, actionId: a.id, at, kind: r.kind, title: "Dogdzi", body: reminderText(style, r.kind, a.title, formatWhen(when)) });
   }
   // Cap per occurrence, keeping the on-time reminder first, then return in time order.
   const custom = o.time ? a.reminderOffsets.length : 0;

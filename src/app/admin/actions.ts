@@ -139,7 +139,7 @@ export async function addAnnotation(_prev: ActionResult | null, form: FormData):
     user_id: userId,
     action_id: actionId,
     event_type: "admin_annotation",
-    data: { note, by: "DOGDZI support" },
+    data: { note, by: "Dogdzi support" },
   });
   if (error) return { ok: false, message: "Couldn't add the note." };
   revalidatePath(`/admin/users/${userId}`);

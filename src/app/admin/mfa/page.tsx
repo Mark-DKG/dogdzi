@@ -37,7 +37,7 @@ export default function AdminMfaPage() {
       if (verified) return setState({ kind: "verify", factorId: verified.id });
       // Clean up abandoned enrolments, then start a new one.
       for (const f of data.all.filter((x) => x.status === "unverified")) await sb.auth.mfa.unenroll({ factorId: f.id });
-      const { data: enrol, error: enrolErr } = await sb.auth.mfa.enroll({ factorType: "totp", friendlyName: `DOGDZI admin ${new Date().toISOString().slice(0, 10)}` });
+      const { data: enrol, error: enrolErr } = await sb.auth.mfa.enroll({ factorType: "totp", friendlyName: `Dogdzi admin ${new Date().toISOString().slice(0, 10)}` });
       if (enrolErr || !enrol) return setState({ kind: "error", message: "Couldn't start authenticator setup. Is MFA enabled in Supabase Auth?" });
       setState({ kind: "enroll", factorId: enrol.id, qr: enrol.totp.qr_code, secret: enrol.totp.secret });
     })();

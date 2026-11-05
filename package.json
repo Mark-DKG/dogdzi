@@ -2,7 +2,7 @@
   "name": "dogdzi",
   "version": "0.1.0",
   "private": true,
-  "description": "DOGDZI — personal execution and accountability app. GET IT DONE. By 9DEVs.",
+  "description": "Dogdzi — personal execution and accountability app. GET IT DONE. By 9DEVs.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

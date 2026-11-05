@@ -61,7 +61,7 @@ function Steps({ method }: { method: InstallMethod }) {
     case "desktop-menu":
       return (
         <p>
-          Click the <b>install icon</b> in the address bar, or open the browser menu and choose <b>Install DOGDZI</b>.
+          Click the <b>install icon</b> in the address bar, or open the browser menu and choose <b>Install Dogdzi</b>.
         </p>
       );
     case "unsupported":
@@ -76,10 +76,10 @@ export function InstallCard() {
   const method = useInstallMethod();
   const [busy, setBusy] = useState(false);
   if (!method) return null;
-  if (method === "installed") return <p className="text-sm text-muted">DOGDZI is installed on this device and opens in its own window.</p>;
+  if (method === "installed") return <p className="text-sm text-muted">Dogdzi is installed on this device and opens in its own window.</p>;
   return (
     <div className="space-y-3 text-sm">
-      <p className="text-muted">Install DOGDZI to open it from your home screen, full-screen, like a regular app.</p>
+      <p className="text-muted">Install Dogdzi to open it from your home screen, full-screen, like a regular app.</p>
       {method === "prompt" ? (
         <Button
           loading={busy}
@@ -89,7 +89,7 @@ export function InstallCard() {
             setBusy(false);
           }}
         >
-          <IconDevice size={18} /> Install DOGDZI
+          <IconDevice size={18} /> Install Dogdzi
         </Button>
       ) : (
         <div className="rounded-xl bg-surface-2 p-4 text-fg">
@@ -125,10 +125,10 @@ export function InstallBanner() {
   };
 
   return (
-    <div className="flex items-start gap-3 rounded-2xl border border-line bg-surface px-4 py-3 text-sm" role="region" aria-label="Install DOGDZI">
+    <div className="flex items-start gap-3 rounded-2xl border border-line bg-surface px-4 py-3 text-sm" role="region" aria-label="Install Dogdzi">
       <IconDevice size={20} className="mt-0.5 shrink-0 text-forest-500" />
       <div className={cn("min-w-0 flex-1 space-y-2")}>
-        <p className="font-semibold text-fg">Add DOGDZI to your home screen</p>
+        <p className="font-semibold text-fg">Add Dogdzi to your home screen</p>
         {method === "prompt" ? (
           <Button
             size="sm"

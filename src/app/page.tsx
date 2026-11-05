@@ -21,7 +21,7 @@ export default function Landing() {
     <div className="min-h-dvh">
       <header className="bg-forest-900 text-cream-100">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-2">
-          <Link href="/" aria-label="DOGDZI home" className="flex min-h-11 items-center">
+          <Link href="/" aria-label="Dogdzi home" className="flex min-h-11 items-center">
             <Monogram height={24} tile={false} />
           </Link>
           <nav className="flex items-center gap-2 text-sm font-semibold">
@@ -40,7 +40,7 @@ export default function Landing() {
         </div>
 
         <section id="main" className="mx-auto flex max-w-6xl flex-col items-center px-5 pb-20 pt-12 text-center sm:pt-16">
-          <h1 className="sr-only">DOGDZI</h1>
+          <h1 className="sr-only">Dogdzi</h1>
           <Lockup width={420} priority className="w-64 sm:w-96" />
           <p className="mt-8 max-w-xl text-lg text-forest-100">
             Plan your actions, follow through, account for what slipped, and recover. A calm, honest system for everyday life.
@@ -77,7 +77,7 @@ export default function Landing() {
             <div>
               <h2 className="text-3xl font-bold tracking-tight">Accountability that helps you, not judges you.</h2>
               <p className="mt-4 text-muted">
-                When something slips, DOGDZI asks what got in the way and lets you choose what happens next. Nothing is quietly deleted, so your record stays honest and you can see patterns over time.
+                When something slips, Dogdzi asks what got in the way and lets you choose what happens next. Nothing is quietly deleted, so your record stays honest and you can see patterns over time.
               </p>
               <ul className="mt-6 space-y-3 text-sm">
                 {[

@@ -1,4 +1,4 @@
-/* DOGDZI service worker: offline shell, notifications and Web Push. */
+/* Dogdzi service worker: offline shell, notifications and Web Push. */
 const VERSION = "dogdzi-v1";
 const SHELL = ["/offline.html", "/icon-192.png", "/brand/dogdzi-monogram.png"];
 
@@ -46,7 +46,7 @@ self.addEventListener("fetch", (event) => {
 });
 
 self.addEventListener("push", (event) => {
-  let data = { title: "DOGDZI", body: "You have an action due.", tag: "dogdzi", url: "/app" };
+  let data = { title: "Dogdzi", body: "You have an action due.", tag: "dogdzi", url: "/app" };
   try {
     data = { ...data, ...event.data.json() };
   } catch (e) {

@@ -1,5 +1,5 @@
 /**
- * DOGDZI Terms of Service. Bump TERMS_VERSION whenever the text changes in a
+ * Dogdzi Terms of Service. Bump TERMS_VERSION whenever the text changes in a
  * way people must re-accept; the app will ask everyone to accept again.
  *
  * DRAFT: have this reviewed by a qualified lawyer before launch.
@@ -19,7 +19,7 @@ export const TERMS: TermsSection[] = [
     id: "agreement",
     title: "1. Agreement to these terms",
     body: [
-      "These Terms of Service (the “Terms”) are a binding agreement between you and 9DEVs, the developer and operator of DOGDZI (“9DEVs”, “we”, “us”, “our” or “management”). They govern your use of the DOGDZI website, web app and any related services (together, the “Service”).",
+      "These Terms of Service (the “Terms”) are a binding agreement between you and 9DEVs, the developer and operator of Dogdzi (“9DEVs”, “we”, “us”, “our” or “management”). They govern your use of the Dogdzi website, web app and any related services (together, the “Service”).",
       "By ticking “I agree”, creating an account, or using the Service in any way, including as a guest, you confirm that you have read, understood and accepted these Terms and our Privacy Notice. If you do not agree, do not use the Service.",
     ],
   },
@@ -34,10 +34,10 @@ export const TERMS: TermsSection[] = [
   },
   {
     id: "service",
-    title: "3. What DOGDZI is (and isn’t)",
+    title: "3. What Dogdzi is (and isn’t)",
     body: [
-      "DOGDZI is a personal planning and accountability tool. It helps you plan actions, receive reminders, review what you missed and plan a recovery. It is provided for general personal productivity only.",
-      "DOGDZI is not medical, mental-health, legal, financial or other professional advice, and it is not an emergency or safety service. Do not rely on it for anything where a missed reminder could cause harm, such as taking medication, caring for someone, or meeting a legal or financial deadline.",
+      "Dogdzi is a personal planning and accountability tool. It helps you plan actions, receive reminders, review what you missed and plan a recovery. It is provided for general personal productivity only.",
+      "Dogdzi is not medical, mental-health, legal, financial or other professional advice, and it is not an emergency or safety service. Do not rely on it for anything where a missed reminder could cause harm, such as taking medication, caring for someone, or meeting a legal or financial deadline.",
       "Reminders and notifications depend on your device, browser, settings, connection and third-party services. We do not guarantee that any reminder will be delivered, or delivered on time.",
     ],
   },
@@ -147,7 +147,7 @@ export const TERMS: TermsSection[] = [
   {
     id: "contact",
     title: "17. Contact",
-    body: ["Questions about these Terms? Contact the DOGDZI team at 9DEVs."],
+    body: ["Questions about these Terms? Contact the Dogdzi team at 9DEVs."],
   },
 ];
 

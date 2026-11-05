@@ -18,14 +18,14 @@ export default function PrivacyPage() {
     <div className="min-h-dvh">
       <header className="bg-forest-900 px-5 pb-5 pt-[max(1.25rem,env(safe-area-inset-top))]">
         <div className="mx-auto max-w-3xl">
-          <Link href="/" aria-label="DOGDZI home" className="inline-flex min-h-11 items-center">
+          <Link href="/" aria-label="Dogdzi home" className="inline-flex min-h-11 items-center">
             <Monogram height={22} tile={false} />
           </Link>
         </div>
       </header>
       <main id="main" className="mx-auto max-w-3xl px-5 py-10 text-[15px] leading-relaxed">
         <h1 className="text-3xl font-bold tracking-tight">Privacy notice</h1>
-        <p className="mt-2 text-sm text-muted">DOGDZI by 9DEVs. Please have this reviewed by your legal adviser before launch.</p>
+        <p className="mt-2 text-sm text-muted">Dogdzi by 9DEVs. Please have this reviewed by your legal adviser before launch.</p>
 
         <h2 className="mt-10 text-xl font-bold">What we collect and why</h2>
         <ul className="mt-3 list-disc space-y-2 pl-5">
@@ -74,7 +74,7 @@ export default function PrivacyPage() {
 
         <h2 className="mt-10 text-xl font-bold">Who can see your data</h2>
         <p className="mt-3">
-          Database rules ensure other users can never read your content. Authorised DOGDZI staff can access accounts when needed to provide support, keep the service safe and enforce our Terms, and can suspend or permanently delete an account, for example for a breach of our Terms or at your request. Staff cannot edit your accountability history.
+          Database rules ensure other users can never read your content. Authorised Dogdzi staff can access accounts when needed to provide support, keep the service safe and enforce our Terms, and can suspend or permanently delete an account, for example for a breach of our Terms or at your request. Staff cannot edit your accountability history.
         </p>
 
         <h2 className="mt-10 text-xl font-bold">Your choices</h2>
@@ -88,7 +88,7 @@ export default function PrivacyPage() {
         <p className="mt-3">Supabase (database and authentication), Vercel (hosting and anonymous web analytics), and your browser vendor&apos;s push service for notifications.</p>
 
         <p className="mt-10 text-sm text-muted">
-          Questions? Contact the DOGDZI team. See also our{" "}
+          Questions? Contact the Dogdzi team. See also our{" "}
           <Link href="/terms" className="underline">
             Terms of Service
           </Link>

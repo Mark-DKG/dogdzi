@@ -19,7 +19,7 @@ function NotConfigured() {
     <Notice tone="warn">
       Accounts aren&apos;t enabled on this server yet. You can still{" "}
       <Link href="/app" className="font-semibold underline">
-        use DOGDZI as a guest
+        use Dogdzi as a guest
       </Link>
       .
     </Notice>

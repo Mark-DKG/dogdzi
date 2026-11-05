@@ -73,7 +73,7 @@ export function DownloadOptions() {
         <>
           <a
             href={apk.file}
-            download="DOGDZI.apk"
+            download="Dogdzi.apk"
             className={buttonClass("primary", "lg", "w-full sm:w-auto")}
           >
             <IconDownload size={20} /> Download for Android
@@ -85,16 +85,16 @@ export function DownloadOptions() {
             items={[
               <>Tap <b>Download for Android</b> and open the file when it finishes.</>,
               <>If Android asks, allow your browser to <b>install unknown apps</b>, then go back and tap <b>Install</b>.</>,
-              <>Open <b>DOGDZI</b> from your home screen and sign in.</>,
+              <>Open <b>Dogdzi</b> from your home screen and sign in.</>,
             ]}
           />
           <p className="rounded-xl bg-surface-2 px-4 py-3 text-sm text-muted">
-            DOGDZI isn&apos;t on Google Play yet, so Android may warn that the app comes from outside the Play Store. That&apos;s expected for apps installed from a website.
+            Dogdzi isn&apos;t on Google Play yet, so Android may warn that the app comes from outside the Play Store. That&apos;s expected for apps installed from a website.
             <span className="mt-1 block break-all font-mono text-xs">SHA-256: {apk.sha256}</span>
           </p>
         </>
       ) : apk === "missing" ? (
-        <p className="text-muted">The Android download is being prepared. Meanwhile, open DOGDZI in Chrome and choose <b>Install app</b> from the menu.</p>
+        <p className="text-muted">The Android download is being prepared. Meanwhile, open Dogdzi in Chrome and choose <b>Install app</b> from the menu.</p>
       ) : (
         <div className="h-12 w-56 animate-pulse rounded-xl bg-surface-2" aria-label="Loading download" />
       )}
@@ -107,10 +107,10 @@ export function DownloadOptions() {
         items={[
           <>Open <b>dogdzi.vercel.app</b> in <b>Safari</b>.</>,
           <>Tap <b>Share</b> <ShareGlyph />, then <b>Add to Home Screen</b>.</>,
-          <>Tap <b>Add</b>. DOGDZI opens full-screen from your home screen, like any other app.</>,
+          <>Tap <b>Add</b>. Dogdzi opens full-screen from your home screen, like any other app.</>,
         ]}
       />
-      <p className="text-sm text-muted">Apple only allows apps to be downloaded from the App Store, so on iPhone DOGDZI installs straight from Safari instead.</p>
+      <p className="text-sm text-muted">Apple only allows apps to be downloaded from the App Store, so on iPhone Dogdzi installs straight from Safari instead.</p>
     </Section>
   );
 
@@ -118,21 +118,21 @@ export function DownloadOptions() {
     <Section key="desktop" id="computer" icon={<IconMonitor />} title="Computer" badge={platform === "desktop" ? "Your device" : undefined} highlight={platform === "desktop"}>
       {installed ? (
         <p className="flex items-center gap-2 text-done">
-          <IconCheck size={18} /> DOGDZI is installed on this device.
+          <IconCheck size={18} /> Dogdzi is installed on this device.
         </p>
       ) : canPrompt ? (
         <Button size="lg" onClick={() => void promptInstall()}>
-          <IconDownload size={20} /> Install DOGDZI
+          <IconDownload size={20} /> Install Dogdzi
         </Button>
       ) : (
         <Steps
           items={[
             <>Open <b>dogdzi.vercel.app</b> in Chrome or Edge.</>,
-            <>Click the <b>install icon</b> in the address bar, or open the browser menu and choose <b>Install DOGDZI</b>.</>,
+            <>Click the <b>install icon</b> in the address bar, or open the browser menu and choose <b>Install Dogdzi</b>.</>,
           ]}
         />
       )}
-      <p className="text-sm text-muted">On a computer you can also just use DOGDZI in your browser. To get it on your phone, open this page there.</p>
+      <p className="text-sm text-muted">On a computer you can also just use Dogdzi in your browser. To get it on your phone, open this page there.</p>
     </Section>
   );
 

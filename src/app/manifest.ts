@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "DOGDZI — Get it done",
-    short_name: "DOGDZI",
+    name: "Dogdzi — Get it done",
+    short_name: "Dogdzi",
     description: "Personal execution and accountability. Plan, follow through, review and recover.",
     id: "/app",
     start_url: "/app",

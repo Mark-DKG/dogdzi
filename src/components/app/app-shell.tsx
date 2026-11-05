@@ -62,7 +62,7 @@ function Shell({ children }: { children: ReactNode }) {
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-forest-900 text-cream-100 lg:flex" aria-label="Main">
         <div className="px-5 pb-4 pt-6">
-          <Link href="/app" aria-label="DOGDZI home" className="inline-block">
+          <Link href="/app" aria-label="Dogdzi home" className="inline-block">
             <Monogram height={30} tile={false} />
           </Link>
         </div>
@@ -120,7 +120,7 @@ function Shell({ children }: { children: ReactNode }) {
 
       {/* Mobile top bar */}
       <header className="sticky top-0 z-30 flex items-center justify-between gap-2 bg-forest-900 pb-1 pl-4 pr-2 pt-[max(0.25rem,env(safe-area-inset-top))] lg:hidden">
-        <Link href="/app" aria-label="DOGDZI home" className="flex h-11 items-center">
+        <Link href="/app" aria-label="Dogdzi home" className="flex h-11 items-center">
           <Monogram height={22} tile={false} />
         </Link>
         <div className="flex items-center">

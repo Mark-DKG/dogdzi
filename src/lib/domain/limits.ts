@@ -58,6 +58,6 @@ export function checkCapability(mode: DataMode, s: Snapshot, cap: Capability, re
     case "sync":
       return { ok: false, reason: "Your guest data stays on this device only. Create an account to back it up and sync across devices." };
     case "push":
-      return { ok: false, reason: "Background push reminders need an account. While DOGDZI is open, guests still get in-app reminders." };
+      return { ok: false, reason: "Background push reminders need an account. While Dogdzi is open, guests still get in-app reminders." };
   }
 }

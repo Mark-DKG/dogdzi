@@ -148,9 +148,9 @@ function Onboarding() {
           <>
             <h1 className="text-2xl font-bold tracking-tight">Plan it. Do it. Own the outcome.</h1>
             <p className="mt-3 text-muted">
-              DOGDZI helps you follow through on everyday commitments. When something slips, you note what happened and pick a way forward. No guilt trips, and nothing quietly disappears.
+              Dogdzi helps you follow through on everyday commitments. When something slips, you note what happened and pick a way forward. No guilt trips, and nothing quietly disappears.
             </p>
-            <ol className="mt-6 flex flex-wrap gap-2" aria-label="How DOGDZI works">
+            <ol className="mt-6 flex flex-wrap gap-2" aria-label="How Dogdzi works">
               {FLOW.map((f, i) => (
                 <li key={f} className="rounded-full bg-surface-2 px-3 py-1.5 text-xs font-bold">
                   {i + 1}. {f}
@@ -158,7 +158,7 @@ function Onboarding() {
               ))}
             </ol>
             <div className="mt-8">
-              <Field label="What should we call you?" optional hint="Your first name, so DOGDZI can greet you.">
+              <Field label="What should we call you?" optional hint="Your first name, so Dogdzi can greet you.">
                 {({ id, describedBy }) => (
                   <Input id={id} aria-describedby={describedBy} autoComplete="given-name" autoCapitalize="words" maxLength={FIRST_NAME_MAX} value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="e.g. Ama" />
                 )}
@@ -198,7 +198,7 @@ function Onboarding() {
                   <p className="text-sm font-semibold">Notifications</p>
                   <p className="text-xs text-muted">
                     {perm === "granted"
-                      ? "Allowed. You'll get reminders while DOGDZI is open."
+                      ? "Allowed. You'll get reminders while Dogdzi is open."
                       : perm === "denied"
                         ? "Blocked in your browser. Reminders will show inside the app."
                         : perm === "unsupported"

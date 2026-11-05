@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="appName">DOGDZI</string>
-    <string name="launcherName">DOGDZI</string>
+    <string name="appName">Dogdzi</string>
+    <string name="launcherName">Dogdzi</string>
     <string name="launchUrl">https://dogdzi.vercel.app/app?source=android</string>
     <string name="hostName">dogdzi.vercel.app</string>
     <string name="providerAuthority">com.ninedevs.dogdzi.fileprovider</string>

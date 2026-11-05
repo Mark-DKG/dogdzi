@@ -1,5 +1,5 @@
 -- ════════════════════════════════════════════════════════════════════
--- DOGDZI — initial schema
+-- Dogdzi — initial schema
 --
 -- Principles enforced here, not only in the app:
 --   • Every user table has row-level security; users only see their rows.

@@ -2,8 +2,8 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 /*
- * Official DOGDZI artwork, used unaltered (aspect ratio preserved).
- *  - Lockup: supplied transparent cream logo (monogram + DOGDZI wordmark).
+ * Official Dogdzi artwork, used unaltered (aspect ratio preserved).
+ *  - Lockup: supplied transparent cream logo (monogram + Dogdzi wordmark).
  *    Only for dark/forest backgrounds: cream on light would fail contrast.
  *  - LockupOnGreen: supplied full-background version, safe on any background.
  *  - Monogram: the DZD mark cropped from the supplied files.
@@ -17,7 +17,7 @@ export function Lockup({ width = 240, className, priority }: { width?: number; c
   return (
     <Image
       src={LOCKUP.src}
-      alt="DOGDZI"
+      alt="Dogdzi"
       width={width}
       height={Math.round((width * LOCKUP.h) / LOCKUP.w)}
       priority={priority}
@@ -30,7 +30,7 @@ export function LockupOnGreen({ width = 200, className, priority }: { width?: nu
   return (
     <Image
       src={LOCKUP_GREEN.src}
-      alt="DOGDZI"
+      alt="Dogdzi"
       width={width}
       height={width}
       priority={priority}
@@ -42,7 +42,7 @@ export function LockupOnGreen({ width = 200, className, priority }: { width?: nu
 /** Compact DZD mark on its brand tile, for navigation and small spaces. */
 export function Monogram({ height = 28, className, tile = true }: { height?: number; className?: string; tile?: boolean }) {
   const width = Math.round((height * MONOGRAM.w) / MONOGRAM.h);
-  const img = <Image src={MONOGRAM.src} alt="DOGDZI" width={width} height={height} className="h-auto select-none" />;
+  const img = <Image src={MONOGRAM.src} alt="Dogdzi" width={width} height={height} className="h-auto select-none" />;
   if (!tile) return <span className={className}>{img}</span>;
   return <span className={cn("inline-flex items-center rounded-xl bg-forest-900 px-2.5 py-2", className)}>{img}</span>;
 }

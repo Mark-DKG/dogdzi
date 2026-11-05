@@ -132,7 +132,7 @@ function Settings() {
         ) : (
           <div className="space-y-3">
             <p className="text-sm">
-              You&apos;re using DOGDZI as a <b>guest</b>. Your data is stored in this browser only. It isn&apos;t backed up and doesn&apos;t sync to other devices.
+              You&apos;re using Dogdzi as a <b>guest</b>. Your data is stored in this browser only. It isn&apos;t backed up and doesn&apos;t sync to other devices.
             </p>
             {accountsAvailable ? (
               <div className="flex gap-2">
@@ -192,7 +192,7 @@ function Settings() {
         </ul>
       </Section>
 
-      <Section title="Reminders" description="How DOGDZI nudges you. Quiet hours are always respected.">
+      <Section title="Reminders" description="How Dogdzi nudges you. Quiet hours are always respected.">
         <ChoiceChips
           label="Reminder style"
           value={p.reminderStyle}
@@ -211,7 +211,7 @@ function Settings() {
 
         <div className="space-y-4 border-t border-line pt-5">
           <Switch
-            label="System notifications while DOGDZI is open"
+            label="System notifications while Dogdzi is open"
             description={
               permission === "unsupported"
                 ? "This browser doesn't support notifications. You'll see reminders inside the app."
@@ -224,7 +224,7 @@ function Settings() {
             onChange={async () => setPermission(await requestNotificationPermission())}
           />
           <Switch
-            label="Push reminders when DOGDZI is closed"
+            label="Push reminders when Dogdzi is closed"
             description={
               mode === "guest"
                 ? "Needs a free account."
@@ -256,7 +256,7 @@ function Settings() {
       <Section title="Privacy & data">
         <Switch
           label="Usage analytics"
-          description="Visits, time in the app, device type and events like 'action completed'. Helps us improve DOGDZI. Never what your actions, notes or reasons say. Saved on this device."
+          description="Visits, time in the app, device type and events like 'action completed'. Helps us improve Dogdzi. Never what your actions, notes or reasons say. Saved on this device."
           checked={analyticsOn}
           onChange={(v) => {
             setAnalyticsEnabled(v);

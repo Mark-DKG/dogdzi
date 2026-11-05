@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  DOGDZI for Android: a Trusted Web Activity that opens https://dogdzi.vercel.app
+  Dogdzi for Android: a Trusted Web Activity that opens https://dogdzi.vercel.app
   full-screen in the user's browser engine, so the installed app is always the
   latest version of the web app (offline support, reminders, sign-in included).
 -->
@@ -63,7 +63,7 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <!-- Lets the web app's push reminders show as DOGDZI notifications. -->
+        <!-- Lets the web app's push reminders show as Dogdzi notifications. -->
         <service
             android:name="com.google.androidbrowserhelper.trusted.DelegationService"
             android:enabled="true"

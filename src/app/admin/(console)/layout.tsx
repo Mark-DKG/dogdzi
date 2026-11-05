@@ -5,7 +5,7 @@ import { Monogram } from "@/components/brand/logo";
 import { ADMIN_REQUIRE_MFA, requireAdmin } from "@/lib/admin/guard";
 import { ADMIN_NAV, ROLE_LABELS } from "@/lib/admin/permissions";
 
-export const metadata: Metadata = { title: { default: "Admin", template: "%s · DOGDZI Admin" }, robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: { default: "Admin", template: "%s · Dogdzi Admin" }, robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

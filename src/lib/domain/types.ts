@@ -1,5 +1,5 @@
 /**
- * DOGDZI domain model.
+ * Dogdzi domain model.
  *
  * An Action is the commitment ("Gym session", "Pay rent"). Each time it is
  * due produces an Occurrence. Status lives on occurrences so a recurring
@@ -199,7 +199,7 @@ export const REMINDER_STYLES = ["gentle", "standard", "firm", "persistent"] as c
 export type ReminderStyle = (typeof REMINDER_STYLES)[number];
 
 export interface Preferences {
-  /** How DOGDZI addresses the user, e.g. on Today. */
+  /** How Dogdzi addresses the user, e.g. on Today. */
   firstName: string | null;
   lifeAreas: LifeArea[];
   timezone: string;

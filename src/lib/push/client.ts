@@ -40,7 +40,7 @@ function urlBase64ToUint8Array(base64: string): Uint8Array {
 /** Subscribe this device to Web Push and register it with the account. */
 export async function subscribeToPush(): Promise<{ ok: true } | { ok: false; message: string }> {
   if (isNativeApp()) return { ok: false, message: "Push reminders in the mobile app aren't available yet." };
-  if (!pushSupported()) return { ok: false, message: "This browser doesn't support push notifications. On iPhone, add DOGDZI to your Home Screen first." };
+  if (!pushSupported()) return { ok: false, message: "This browser doesn't support push notifications. On iPhone, add Dogdzi to your Home Screen first." };
   if (!pushConfigured) return { ok: false, message: "Push notifications aren't configured on this server yet." };
   const permission = await requestNotificationPermission();
   if (permission !== "granted") return { ok: false, message: "Notifications are blocked. You can allow them in your browser's site settings." };

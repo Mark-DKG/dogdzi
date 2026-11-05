@@ -27,7 +27,7 @@ function writeSent(day: string, keys: Set<string>) {
 }
 
 /**
- * In-app reminders while DOGDZI is open (guests and accounts). Uses system
+ * In-app reminders while Dogdzi is open (guests and accounts). Uses system
  * notifications if the user allowed them, otherwise an on-screen toast.
  * When this device is subscribed to server push (account with push on), the
  * server sends reminders instead so people aren't notified twice. Push being

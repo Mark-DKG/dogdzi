@@ -72,7 +72,7 @@ export function TermsGate() {
             {updated ? "We've updated our Terms" : "Before you continue"}
           </h2>
           <p className="mt-2 text-sm text-muted">
-            {updated ? "Please review and accept the new Terms of Service to keep using DOGDZI." : "Please review and accept our Terms of Service to use DOGDZI."}
+            {updated ? "Please review and accept the new Terms of Service to keep using Dogdzi." : "Please review and accept our Terms of Service to use Dogdzi."}
           </p>
           <div className="mt-5">
             <TermsCheckbox checked={agreed} onChange={setAgreed} />

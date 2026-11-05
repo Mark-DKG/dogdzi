@@ -18,7 +18,7 @@ export default function AdminSignInPage() {
         <div className="mb-6 flex items-center gap-3">
           <Monogram height={20} />
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted">DOGDZI</p>
+            <p className="text-sm font-bold tracking-wide text-muted">Dogdzi</p>
             <h1 className="text-lg font-bold">Admin console</h1>
           </div>
         </div>

@@ -1,4 +1,4 @@
-# DOGDZI — Get it done
+# Dogdzi — Get it done
 
 Personal execution and accountability app by **9DEVs**. People plan actions, follow through, account for what was missed, and recover.
 
@@ -40,7 +40,7 @@ Without Supabase variables the app runs in **guest-only mode**. Sign-up, sync an
 
 ### Create the first Super Admin
 
-Admins are normal Supabase Auth users who are listed in `admin_users`. Use a **dedicated staff email**, not a personal DOGDZI account. There is no shared admin login.
+Admins are normal Supabase Auth users who are listed in `admin_users`. Use a **dedicated staff email**, not a personal Dogdzi account. There is no shared admin login.
 
 1. Sign up at `/signup` with the staff email and confirm it.
 2. In the SQL Editor:
@@ -182,7 +182,7 @@ select * from audit_log;                          -- permission denied
 - Inputs use 16px text on touch screens, so iOS doesn't zoom.
 - Tap targets are at least 40–44px.
 
-**Native (Capacitor) readiness.** Platform checks go through `src/lib/platform.ts` (`isNativeApp()`, `capabilities.*`). Inside a native shell the web service worker, Web Push and install prompts switch off automatically. Not done yet: native push (needs the Capacitor push plugin with APNs/FCM), background execution, and app-store packaging. Because DOGDZI uses server routes, a Capacitor build should load the deployed site (`server.url`) rather than a static export.
+**Native (Capacitor) readiness.** Platform checks go through `src/lib/platform.ts` (`isNativeApp()`, `capabilities.*`). Inside a native shell the web service worker, Web Push and install prompts switch off automatically. Not done yet: native push (needs the Capacitor push plugin with APNs/FCM), background execution, and app-store packaging. Because Dogdzi uses server routes, a Capacitor build should load the deployed site (`server.url`) rather than a static export.
 
 ## 8. Mobile packaging later
 

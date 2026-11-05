@@ -5,7 +5,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
       <div className="flex flex-col items-center justify-center bg-forest-900 px-6 pb-10 pt-[max(2.5rem,env(safe-area-inset-top))] text-center lg:pb-0">
-        <Link href="/" aria-label="DOGDZI home">
+        <Link href="/" aria-label="Dogdzi home">
           <Lockup width={260} priority className="w-48 lg:w-72" />
         </Link>
         <p className="mt-6 hidden max-w-sm text-sm text-forest-200 lg:block">Plan your actions, follow through, account for what slipped, and recover. Calmly.</p>
