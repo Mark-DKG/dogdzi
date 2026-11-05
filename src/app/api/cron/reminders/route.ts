@@ -4,7 +4,7 @@ import { datesToScan, selectReminders } from "@/lib/push/dispatch";
 import { sendPush, webPushReady } from "@/lib/push/send";
 import { fromRow, prefsFromRows } from "@/lib/store/mappers";
 import { json } from "@/lib/http";
-import { getServiceSupabase } from "@/lib/supabase/server";
+import { getServiceSupabase, serviceKeyIssue } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,12 +21,16 @@ const MAX_USERS_PER_RUN = 500;
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET;
   if (!secret || req.headers.get("authorization") !== `Bearer ${secret}`) return json({ error: "unauthorized" }, 401);
+  const keyIssue = serviceKeyIssue();
+  if (keyIssue) return json({ error: keyIssue }, 500);
   const service = getServiceSupabase();
   if (!service || !webPushReady()) return json({ skipped: "push or database not configured" });
 
   const now = new Date();
   const windowStart = new Date(now.getTime() - WINDOW_MINUTES * 60000);
-  const { data: enabled } = await service.from("notification_preferences").select("*").eq("push_enabled", true).limit(MAX_USERS_PER_RUN);
+  const { data: enabled, error: listError } = await service.from("notification_preferences").select("*").eq("push_enabled", true).limit(MAX_USERS_PER_RUN);
+  // Never report "0 users" when the query actually failed.
+  if (listError) return json({ error: `Couldn't read notification settings: ${listError.message}` }, 500);
   let sent = 0;
   let removed = 0;
 

@@ -4,7 +4,7 @@ import { AdminForm, SubmitButton } from "@/components/admin/admin-form";
 import { Badge, Card, PageHeader, SectionTitle } from "@/components/ui/surface";
 import { ADMIN_REQUIRE_MFA, requireAdmin } from "@/lib/admin/guard";
 import { vercelAnalyticsConfigured } from "@/lib/analytics/vercel-api";
-import { getServiceSupabase } from "@/lib/supabase/server";
+import { getServiceSupabase, serviceKeyIssue } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Settings" };
 
@@ -14,6 +14,7 @@ export default async function SettingsPage() {
   const ann = (data?.value ?? { text: "", active: false }) as { text: string; active: boolean };
 
   const checks: [string, boolean, string][] = [
+    ["Service role key", !serviceKeyIssue(), serviceKeyIssue() ?? "Set SUPABASE_SERVICE_ROLE_KEY (secret key) in Vercel"],
     ["Admin MFA required", ADMIN_REQUIRE_MFA, "Set ADMIN_REQUIRE_MFA=true"],
     ["Web Push (VAPID keys)", Boolean(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY), "Generate with npm run vapid:generate"],
     ["Reminder cron secret", Boolean(process.env.CRON_SECRET), "Set CRON_SECRET and schedule /api/cron/reminders"],

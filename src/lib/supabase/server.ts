@@ -25,12 +25,32 @@ export async function getServerSupabase(): Promise<SupabaseClient | null> {
 let admin: SupabaseClient | null = null;
 
 /**
+ * Why the service-role key can't be used, or null when it looks right. Catches
+ * the easy mistake of pasting the publishable key: Supabase then answers every
+ * server query with 401/permission denied and features fail silently.
+ */
+export function serviceKeyIssue(): string | null {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  if (!key) return "SUPABASE_SERVICE_ROLE_KEY is not set.";
+  if (key === SUPABASE_ANON_KEY || key.startsWith("sb_publishable_")) {
+    return "SUPABASE_SERVICE_ROLE_KEY holds the publishable key. Use the secret key (sb_secret_…) or the legacy service_role key.";
+  }
+  if (!key.startsWith("sb_secret_") && key.split(".").length !== 3) return "SUPABASE_SERVICE_ROLE_KEY doesn't look like a Supabase secret key.";
+  return null;
+}
+
+/**
  * Service-role client. Bypasses RLS — use only in server code after an
  * explicit permission check. Never import this from client components.
  */
 export function getServiceSupabase(): SupabaseClient | null {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
   if (!isSupabaseConfigured || !key) return null;
+  const issue = serviceKeyIssue();
+  if (issue) {
+    console.error("[dogdzi]", issue);
+    return null;
+  }
   if (!admin) {
     admin = createClient(SUPABASE_URL, key, { auth: { persistSession: false, autoRefreshToken: false } });
   }
